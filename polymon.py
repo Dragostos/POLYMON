@@ -29,10 +29,10 @@ Combat
             Is just tackle.
             Improvements: increases damage
         Arrow storm 
-            sends some arrows at the opponent
-            Improvements: More arrows OR more damage
+            shoots arrows, has a chance to attack again
+            Improvements: higher chance of attacking again OR more damage
         Polyscare
-            debuff's the opponents attack or defense (chosen at the beginning)
+            debuffs the opponents attack or defense (chosen at the beginning)
             Improvements: increases the debuff
         Ridicule
             Boosts opponents attack but lowers their defense
@@ -78,19 +78,46 @@ running = True
 part1 = True
 part2 = False
 part3 = False
-
 encounter_part1 = True
 encounter_part2 = False
 encounter_part3 = False
 
-class Player:
+
+
+move_stats = {
+    'Square Fury' : {
+        'Damage': 1
+    },
+    'Arrow Storm': {
+        'Chance': 1,
+        'Damage': 1
+    },
+    'Polyscare': {
+        'Damage': 1
+    },
+    'Ridicule': {
+        'Attack Buff Decrease': 1,
+        'Defense Debuff Increase': 1
+    }
+}
+
+
+class Entity:
     def __init__(self):
         self.color = 'black'
+        self.level = 1
+        self.health = 68
+        self.defense = 40
+        self.move_stats = move_stats
+
+class Player(Entity):
+    def __init__(self):
+        super().__init__()
         self.loc = [0,15]
 
-class Enemy:
+class Enemy(Entity):
     def __init__(self):
-        self.color = 'black'
+        super().__init__()
 
 player = Player()
 enemy = Enemy()
