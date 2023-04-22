@@ -32,7 +32,7 @@ Combat
             sends some arrows at the opponent
             Improvements: More arrows OR more damage
         Polyscare
-            debuff's the opponents attack or defense (chosen at the beginning)
+            debuffs the opponents attack or defense (chosen at the beginning)
             Improvements: increases the debuff
         Ridicule
             Boosts opponents attack but lowers their defense
@@ -86,10 +86,12 @@ class Player:
     def __init__(self):
         self.color = 'black'
         self.loc = [0,15]
+        self.level = 1
 
 class Enemy:
     def __init__(self):
         self.color = 'black'
+        self.level = 1
 
 player = Player()
 enemy = Enemy()
