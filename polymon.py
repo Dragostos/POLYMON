@@ -37,12 +37,6 @@ Combat
         Ridicule
             Boosts opponents attack but lowers their defense
             Improvements: lowers the attack buff OR increases the defense debuff
-    Items
-        Capture device
-            captures wild sqaures
-        Repair Square
-            heals
-
 
 '''
 #python -m pip install -U --user pygame
@@ -56,9 +50,9 @@ screen = pg.display.set_mode((1000,600))
 pg.display.set_caption("deez nuts")
 mouseX = 0
 mouseY = 0
-basic_menu = True
-attack_menu = False
 pressed = 0
+bools = 0
+edges = [1,1]
 
 
 
@@ -74,13 +68,20 @@ time_delay = 1000
 timer_event = pg.USEREVENT + 1
 pg.time.set_timer(timer_event, time_delay)
 time_passed = 0
-restart = False
+length_p = 1
+length_e = 1
+length_b = 1
+
 
 
 running = True
 part1 = True
 part2 = False
 part3 = False
+
+encounter_part1 = True
+encounter_part2 = False
+encounter_part3 = False
 
 class Player:
     def __init__(self):
@@ -145,7 +146,6 @@ def vert_line():
             block_x = 225
     return map, boolz
 
-
 def hori_line():
     map = 'hori_line'
     block_x = 225
@@ -165,7 +165,6 @@ def hori_line():
         block_y += 35
         block_x = 225
     return map, boolz
-
 
 def cross():
     map = 'cross'
@@ -188,12 +187,6 @@ def cross():
         block_y += 35
         block_x = 225
     return map, boolz
-
-
-
-
-    
-
 
 def corner(direction):
     map = 'corner'
@@ -292,7 +285,7 @@ def t_map(direction):
         block_y += 35
         block_x = 225
     return map, boolz
-bools = 0
+
 
 map_order = [
     ["corner('down right')", 'hori_line()', "t_map('down')", "corner('down left')"],
@@ -300,8 +293,7 @@ map_order = [
     ["corner('down right')", "t_map('down')", "t_map('up')", "t_map('left')"],
     ['start_map()', "corner('up right')", 'hori_line()', "corner('up left')"]
 ]
-#checked_edge = False
-edges = [1,1]
+
 
 def check_switch():
     if (player.loc[1] == 0 and (player.loc[0] == 7 or player.loc[0] == 8)) or (player.loc[0] == 15 and (player.loc[1] == 7 or player.loc[1] == 8)) or (player.loc[1] == 15 and (player.loc[0] == 7 or player.loc[0] == 8)) or (player.loc[0] == 0 and (player.loc[1] == 7 or player.loc[1] == 8)):
@@ -349,13 +341,12 @@ while running:
             checked_edge = False
             
 
-        if event.type == timer_event and on_green == True:  #enemy spawning
+        if event.type == timer_event and on_green == True:  # encounter
             time_passed += 1
-            if time_passed % 1 == 0:
+            if time_passed % 10 == 0:
                 encounter()
             else:
                 print("hello")
-            #make a variable count, and stay for however long using mod that number, i.e time_passed%3 to stay for three seconds
             
             
         
@@ -388,7 +379,8 @@ while running:
     '''
     Roaming
     '''
-    if part2 == True: 
+    if part2 == True:
+        
         
         current_map, bools = eval(map_order[map_loc[1]][map_loc[0]])    
         
@@ -452,13 +444,41 @@ while running:
 
 
     '''
-    Battle
+    Battle/Encounter
     '''
     if part3 == True:
-        pg.draw.rect(screen, 'white', (100, 50, 800, 500)) #backdrop
+            pg.draw.rect(screen, 'white', (100, 50, 800, 500)) #backdrop
 
-        pg.draw.rect(screen , player.color, (150, 450, 50,50))
+            if encounter_part1:# player init animation
+                pg.draw.rect(screen, 'black', (125, 475, 750, 50))
+                pg.draw.rect(screen, 'green', (130, 480, length_p, 40))
+                if time_passed % 1 == 0 and length_p <= 740:
+                    length_p += 2*.5
+                get_text(40, 'Loading Player Stats', 'black', (500, 100))
+                if length_p >= 740:
+                    encounter_part2 = True
+                    encounter_part1 = False
+            if encounter_part2: # enemy init animation
+                pg.draw.rect(screen, 'black', (125, 475, 750, 50))
+                pg.draw.rect(screen, 'green', (130, 480, length_e, 40))
+                if time_passed % 1 == 0 and length_e <= 740:
+                    length_e += 2*.5
+                get_text(40, 'Loading Enemy Stats', 'black', (500, 100))
+                if length_e >= 740:
+                    encounter_part3 = True
+                    encounter_part2 = False
+            if encounter_part3: #final animation
+                pg.draw.rect(screen, 'black', (125, 475, 750, 50))
+                pg.draw.rect(screen, 'green', (130, 480, length_b, 40))
+                if time_passed % 1 == 0 and length_b <= 740:
+                    length_b += 2*.5
+                get_text(40, 'Loading Battle...', 'black', (500, 100))
+                if length_b >= 740:
+                    get_text(40, 'Complete', 'black', (500, 300))
+                    encounter_part3 = False
+        #start battle
         
+               
 
 
 
