@@ -30,7 +30,7 @@ Combat
         Arrow storm 
             shoots arrows, has a chance to crit (damage+multi)
         Polyscare
-            debuffs the opponents attack or defense, chosen randomly
+            lowers the opponents defense
         Ridicule
             Boosts opponents attack but lowers their defense
 
@@ -70,7 +70,8 @@ length_p = 1
 length_e = 1
 length_b = 1
 
-counter = 0
+
+counter = 4
 text1 = 'didnt work bozo'
 text2 = "didn't work either dum dum"
 e_bar_x = 536
@@ -123,7 +124,32 @@ move_stats = {
 move_options = ['Square Fury', 'Arrow Storm', 'Polyscare', 'Ridicule']
 
 
+def damage(attacker, move, opponent):
+    if move == 'Square Fury':
+        damage = attacker.move_stats[move]['Damage']  +   math.floor(attacker.move_stats[move]['Damage'] * attacker.multi)
+        debuff = 0
+        buff = 0
+        move_text = f'{attacker.name} dealt {damage} damage!'
 
+    elif move == 'Arrow Storm':
+        damage = attacker.multi*(attacker.move_stats[move]['Damage']  +   math.floor(attacker.move_stats[move]['Damage'] * attacker.multi)) if random.randint(1,100) <= 5 else attacker.move_stats[move]['Damage']  +   math.floor(attacker.move_stats[move]['Damage'] * attacker.multi)
+        buff = 0
+        debuff = 0
+        move_text = f'{attacker.name} dealt {damage} damage!'
+
+    elif move == 'Polyscare':
+        damage = 0
+        buff = 0
+        debuff = opponent.defense * .05
+        move_text = f"{opponent.name}'s defense lowered!"
+
+    elif move == 'Ridicule':
+        damage = 0
+        debuff = opponent.defense * .10
+        buff = opponent.multi + (opponent.multi * 0.5)
+        move_text = f"{opponent.name}'s defense lowered and atttack increased!'"
+    
+    return damage, move_text, buff, debuff
 
 
 
@@ -141,10 +167,12 @@ class Player(Entity):
     def __init__(self):
         super().__init__()
         self.loc = [0,15]
+        self.name = 'Player'
 
 class Enemy(Entity):
     def __init__(self):
         super().__init__()
+        self.name = 'Enemy'
 
 player = Player()
 enemy = Enemy()
@@ -360,7 +388,7 @@ def encounter():
     roaming = False
     battle = True
 
-# WHEN BACK KEEP PRESSINNG CTRL Y, DELETE THE TURN STUFF AND REDO THE DAMAGE
+
 
 
 
@@ -404,7 +432,8 @@ while running:
             else:
                 print("hello")
         
-        #if event.type == timer_event and enemy_move_choice != False and player_move_choice != False: 
+        if event.type == timer_event and enemy_move_choice != False and player_move_choice != False:
+            counter -= 1
             
             
             
@@ -603,8 +632,8 @@ while running:
                     player_move4 = player.color
                     player_move_choice = 'Ridicule'
                 if enemy_move_choice == False:
-                    enemy_move_choice = 'Square Fury'
-                    #enemy_move_choice = random.choice(move_options)
+                    #enemy_move_choice = 'Square Fury'
+                    enemy_move_choice = random.choice(move_options)
                 
             
                 
@@ -649,12 +678,26 @@ while running:
             if enemy_move_choice == False:
                 enemy_move1, enemy_move2, enemy_move3, enemy_move4 = 'green','green','green','green'
 
-#             if enemy_move_choice != False and player_move_choice != False:
+            if enemy_move_choice != False and player_move_choice != False:
+                p_damage, p_text, p_buff, p_debuff = damage(Player(), player_move_choice, Enemy())
+                e_damage, e_text, e_buff, e_debuff = damage(Enemy(), enemy_move_choice, Player())
+               
+                text1 = f'Player used {player_move_choice}!' if counter > 0 else f'Enemy used {enemy_move_choice}!'
+                text2 = p_text if counter > 0 else e_text
+                
+                get_text(30, text1, 'black', (500, 250))
+                get_text(30, text2, 'black', (500, 300))
+
                 
 
-# def damage(entity, move):
-#     if move == 'Square Fury':
-#             damage = entity.move_stats[move]['Damage']
+                if counter == -4:
+                    player_move_choice = False
+                    enemy_move_choice = False
+                    counter = 4
+
+                
+
+
 #^^ making the damage function - will have 4 ifs that define variariables such as damage, buff and debuff. DO NOT have any stat changing code in the function, it will break things. have all of that after it is called.
 
                 
