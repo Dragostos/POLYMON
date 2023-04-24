@@ -27,22 +27,20 @@ Combat
     Moves
         Square fury
             Is just tackle.
-            Improvements: increases damage
         Arrow storm 
-            shoots arrows, has a chance to attack again
-            Improvements: higher chance of attacking again OR more damage
+            shoots arrows, has a chance to crit (damage+multi)
         Polyscare
-            debuffs the opponents attack or defense (chosen at the beginning)
-            Improvements: increases the debuff
+            debuffs the opponents attack or defense, chosen randomly
         Ridicule
             Boosts opponents attack but lowers their defense
-            Improvements: lowers the attack buff OR increases the defense debuff
 
 '''
 #python -m pip install -U --user pygame
 import pygame as pg
 import sys
 import random
+import math
+
 
 pg.init()
 
@@ -72,41 +70,70 @@ length_p = 1
 length_e = 1
 length_b = 1
 
+counter = 0
+text1 = 'didnt work bozo'
+text2 = "didn't work either dum dum"
+e_bar_x = 536
+
 
 
 running = True
-part1 = True
-part2 = False
-part3 = False
+
+start_menu = True
+roaming = False
+battle = False
+battle_finish = False
+
+
 encounter_part1 = True
 encounter_part2 = False
 encounter_part3 = False
 
 
+player_move1 = 'green'
+player_move2 = 'green'
+player_move3 = 'green'
+player_move4 = 'green'
+
+enemy_move1 = 'green'
+enemy_move2 = 'green'
+enemy_move3 = 'green'
+enemy_move4 = 'green'
+
+player_move_choice = False
+enemy_move_choice = False
 
 move_stats = {
     'Square Fury' : {
-        'Damage': 1
+        'Damage': 2
     },
     'Arrow Storm': {
-        'Chance': 1,
-        'Damage': 1
+        'Chance': 5,
+        'Damage': 2
     },
     'Polyscare': {
-        'Damage': 1
+        'Debuff': 1.5
     },
     'Ridicule': {
-        'Attack Buff Decrease': 1,
-        'Defense Debuff Increase': 1
+        'Attack Buff Increase': 1.5,
+        'Defense Debuff Decrease': 1.5
     }
 }
+
+move_options = ['Square Fury', 'Arrow Storm', 'Polyscare', 'Ridicule']
+
+
+
+
 
 
 class Entity:
     def __init__(self):
         self.color = 'black'
         self.level = 1
+        self.multi = self.level * 1.5
         self.health = 68
+        self.health_bar = 298
         self.defense = 40
         self.move_stats = move_stats
 
@@ -329,11 +356,13 @@ def check_switch():
         return False
         
 def encounter():
-    global part2, part3
-    part2 = False
-    part3 = True
+    global roaming, battle
+    roaming = False
+    battle = True
 
-    
+# WHEN BACK KEEP PRESSINNG CTRL Y, DELETE THE TURN STUFF AND REDO THE DAMAGE
+
+
 
 
 while running:
@@ -341,7 +370,7 @@ while running:
         if event.type == pg.QUIT:   
             pg.quit()
             sys.exit()
-        if event.type == pg.KEYDOWN and part2:
+        if event.type == pg.KEYDOWN and roaming:
             if event.key == pg.K_w and player.loc[1] >= 1:
                 player.loc[1] -= 1
             elif event.key == pg.K_a and player.loc[0] >= 1: 
@@ -370,10 +399,13 @@ while running:
 
         if event.type == timer_event and on_green == True:  # encounter
             time_passed += 1
-            if time_passed % 10 == 0:
+            if time_passed % 1 == 0:
                 encounter()
             else:
                 print("hello")
+        
+        #if event.type == timer_event and enemy_move_choice != False and player_move_choice != False: 
+            
             
             
         
@@ -383,7 +415,7 @@ while running:
     '''
     Start menu
     '''
-    if part1 == True:
+    if start_menu == True:
         get_text(50, 'Welcome to Polymon!', 'white', (500, 25))
         get_text(50, 'Press Start', 'white', (500,300))
         get_text(50, 'Team Red', 'red', (250,500))
@@ -399,14 +431,14 @@ while running:
                 player.color = 'blue'
                 enemy.color = 'red'
             elif mouseX >= 400 and mouseX <= 600 and mouseY >= 280 and mouseY <= 319:
-              part1 = False
-              part2 = True
+              start_menu = False
+              roaming = True
 
 
     '''
     Roaming
     '''
-    if part2 == True:
+    if roaming == True:
         
         
         current_map, bools = eval(map_order[map_loc[1]][map_loc[0]])    
@@ -460,50 +492,184 @@ while running:
         
 
         
-        get_text(20, f'White: {on_white}', 'white', (900, 10))
-        get_text(20, f'Green: {on_green}', 'green', (900, 30))
-        get_text(20, f'Edge: {checked_edge}', 'white', (900, 50))
-        get_text(20, current_map, 'red', (900, 70))
-        get_text(20, map_order[map_loc[1]][map_loc[0]], 'red', (900, 90))
+        # get_text(20, f'White: {on_white}', 'white', (900, 10))
+        # get_text(20, f'Green: {on_green}', 'green', (900, 30))
+        # get_text(20, f'Edge: {checked_edge}', 'white', (900, 50))
+        # get_text(20, current_map, 'red', (900, 70))
+        # get_text(20, map_order[map_loc[1]][map_loc[0]], 'red', (900, 90))
         
         
         pg.draw.rect(screen, player.color, (225+(35*player.loc[0]), 25+(35*player.loc[1]), 25 , 25  ) )
 
 
     '''
-    Battle/Encounter
+    Encounter
     '''
-    if part3 == True:
-            pg.draw.rect(screen, 'white', (100, 50, 800, 500)) #backdrop
+    if battle:
+        pg.draw.rect(screen, 'white', (100, 50, 800, 500)) #backdrop
 
-            if encounter_part1:# player init animation
-                pg.draw.rect(screen, 'black', (125, 475, 750, 50))
-                pg.draw.rect(screen, 'green', (130, 480, length_p, 40))
-                if time_passed % 1 == 0 and length_p <= 740:
-                    length_p += 2*.5
-                get_text(40, 'Loading Player Stats', 'black', (500, 100))
-                if length_p >= 740:
-                    encounter_part2 = True
-                    encounter_part1 = False
-            if encounter_part2: # enemy init animation
-                pg.draw.rect(screen, 'black', (125, 475, 750, 50))
-                pg.draw.rect(screen, 'green', (130, 480, length_e, 40))
-                if time_passed % 1 == 0 and length_e <= 740:
-                    length_e += 2*.5
-                get_text(40, 'Loading Enemy Stats', 'black', (500, 100))
-                if length_e >= 740:
-                    encounter_part3 = True
-                    encounter_part2 = False
-            if encounter_part3: #final animation
-                pg.draw.rect(screen, 'black', (125, 475, 750, 50))
-                pg.draw.rect(screen, 'green', (130, 480, length_b, 40))
-                if time_passed % 1 == 0 and length_b <= 740:
-                    length_b += 2*.5
-                get_text(40, 'Loading Battle...', 'black', (500, 100))
-                if length_b >= 740:
-                    get_text(40, 'Complete', 'black', (500, 300))
-                    encounter_part3 = False
+        if encounter_part1:# player init animation
+            pg.draw.rect(screen, 'black', (125, 475, 750, 50))
+            pg.draw.rect(screen, 'green', (130, 480, length_p, 40))
+            if time_passed % 1 == 0 and length_p <= 740:
+                length_p += 2*2
+            get_text(40, 'Loading Player Stats', 'black', (500, 100))
+            if length_p >= 740:
+                encounter_part2 = True
+                encounter_part1 = False
+        if encounter_part2: # enemy init animation
+            pg.draw.rect(screen, 'black', (125, 475, 750, 50))
+            pg.draw.rect(screen, 'green', (130, 480, length_e, 40))
+            if time_passed % 1 == 0 and length_e <= 740:
+                length_e += 2*2
+            get_text(40, 'Loading Enemy Stats', 'black', (500, 100))
+            if length_e >= 740:
+                encounter_part3 = True
+                encounter_part2 = False
+        if encounter_part3: #final animation
+            pg.draw.rect(screen, 'black', (125, 475, 750, 50))
+            pg.draw.rect(screen, 'green', (130, 480, length_b, 40))
+            if time_passed % 1 == 0 and length_b <= 740:
+                length_b += 2*2
+            get_text(40, 'Initializing Battle', 'black', (500, 100))
+            if length_b >= 740:
+                get_text(40, 'Complete', 'black', (500, 300))
+                encounter_part3 = False
+
+
         #start battle
+
+        if encounter_part1 == False and encounter_part2== False and encounter_part3 == False:
+            
+
+            #get_text(20, 'I', 'black', (500, 50)) #middle
+            
+            
+            
+            pg.draw.rect(screen, 'grey', (165,55, 300, 17))  #player 
+            pg.draw.rect(screen, 'green', (166, 56, player.health_bar, 15))
+            pg.draw.rect(screen, player.color, (105, 55, 50,50))
+            get_text(25, f'lvl {str(player.level)}', 'black', (183, 85))
+            
+
+            pg.draw.circle(screen, player_move1, (130,150), 25)
+            pg.draw.circle(screen, player_move1, (230,150), 25)
+            pg.draw.rect(screen, player_move1, (130, 125, 100,50))
+            get_text(20, "Square Fury", 'black', (180, 150))
+            if mouseX >= 105 and mouseX <= 255 and mouseY >= 125 and mouseY <= 175 and player_move_choice == False:
+                player_move1 = 'gold'
+            elif player_move_choice == False:
+                player_move1 = 'green'
+            
+            
+            pg.draw.circle(screen, player_move2, (130,210), 25)
+            pg.draw.circle(screen, player_move2, (230,210), 25)
+            pg.draw.rect(screen, player_move2, (130, 185, 100,50))
+            get_text(20, "Arrow Storm", 'black', (180, 210))
+            if mouseX >= 105 and mouseX <= 255 and mouseY >= 185 and mouseY <= 235 and player_move_choice == False:
+                player_move2 = 'gold'
+            elif player_move_choice == False:
+                player_move2 = 'green'
+
+            pg.draw.circle(screen, player_move3, (130,270), 25)
+            pg.draw.circle(screen, player_move3, (230,270), 25)
+            pg.draw.rect(screen, player_move3, (130, 245, 100,50))
+            get_text(20, "Polyscare", 'black', (180, 270))
+            if mouseX >= 105 and mouseX <= 255 and mouseY >= 245 and mouseY <= 295 and player_move_choice == False:
+                player_move3 = 'gold'
+            elif player_move_choice == False:
+                player_move3 = 'green'
+
+            pg.draw.circle(screen, player_move4, (130,330), 25)
+            pg.draw.circle(screen, player_move4, (230,330), 25)
+            pg.draw.rect(screen, player_move4, (130, 305, 100,50))
+            get_text(20, "Ridicule", 'black', (180, 330))
+            if mouseX >= 105 and mouseX <= 255 and mouseY >= 305 and mouseY <= 355 and player_move_choice == False:
+                player_move4 = 'gold'
+            elif player_move_choice == False:
+                player_move4 = 'green'
+            
+            if event.type == pg.MOUSEBUTTONDOWN:
+                if player_move1 == 'gold':
+                    player_move1 = player.color
+                    player_move_choice = 'Square Fury'
+                elif player_move2 == 'gold':
+                    player_move2 = player.color
+                    player_move_choice = 'Arrow Storm'
+                elif player_move3 == 'gold':
+                    player_move3 = player.color
+                    player_move_choice = 'Polyscare'
+                elif player_move4 == 'gold':
+                    player_move4 = player.color
+                    player_move_choice = 'Ridicule'
+                if enemy_move_choice == False:
+                    enemy_move_choice = 'Square Fury'
+                    #enemy_move_choice = random.choice(move_options)
+                
+            
+                
+
+
+
+
+            pg.draw.rect(screen, 'grey', (535,55, 300, 17))
+            pg.draw.rect(screen, 'green', (e_bar_x, 56, enemy.health_bar, 15))
+            pg.draw.rect(screen, enemy.color, (845, 55, 50,50))
+            get_text(25, f'lvl {str(enemy.level)}', 'black', (817, 85))
+            
+
+            pg.draw.circle(screen, enemy_move1, (870,150), 25)
+            pg.draw.circle(screen, enemy_move1, (770,150), 25)
+            pg.draw.rect(screen, enemy_move1, (770, 125, 100,50))
+            get_text(20, "Square Fury", 'black', (820, 150))
+            
+            pg.draw.circle(screen, enemy_move2, (870,210), 25)
+            pg.draw.circle(screen, enemy_move2, (770,210), 25)
+            pg.draw.rect(screen, enemy_move2, (770, 185, 100,50))
+            get_text(20, "Arrow Storm", 'black', (820, 210))
+
+            pg.draw.circle(screen, enemy_move3, (870,270), 25)
+            pg.draw.circle(screen, enemy_move3, (770,270), 25)
+            pg.draw.rect(screen, enemy_move3, (770, 245, 100,50))
+            get_text(20, "Polyscare", 'black', (820, 270))
+
+            pg.draw.circle(screen, enemy_move4, (870,330), 25)
+            pg.draw.circle(screen, enemy_move4, (770,330), 25)
+            pg.draw.rect(screen, enemy_move4, (770, 305, 100,50))
+            get_text(20, "Ridicule", 'black', (820, 330))
+
+            if enemy_move_choice == move_options[0]:
+                enemy_move1 = enemy.color
+            elif enemy_move_choice == move_options[1]:
+                enemy_move2 = enemy.color
+            elif enemy_move_choice == move_options[2]:
+                enemy_move3 = enemy.color
+            elif enemy_move_choice == move_options[3]:
+                enemy_move4 = enemy.color
+            if enemy_move_choice == False:
+                enemy_move1, enemy_move2, enemy_move3, enemy_move4 = 'green','green','green','green'
+
+#             if enemy_move_choice != False and player_move_choice != False:
+                
+
+# def damage(entity, move):
+#     if move == 'Square Fury':
+#             damage = entity.move_stats[move]['Damage']
+#^^ making the damage function - will have 4 ifs that define variariables such as damage, buff and debuff. DO NOT have any stat changing code in the function, it will break things. have all of that after it is called.
+
+                
+    
+
+
+
+            
+                
+
+
+            
+
+
+
         
                
 
@@ -523,8 +689,10 @@ while running:
     mouseX = mousePos[0]
     mouseY = mousePos[1]
     get_text(20, f'{mouseX}, {mouseY}', 'white', (50, 10))
-    get_text(20, player.color,  player.color,(50, 30))
-    get_text(20, f'{player.loc[0]}, {player.loc[1]}', 'white', (50, 50))
-    get_text(20, f'{map_loc[0]}, {map_loc[1]}', 'white', (50, 70))
-    get_text(20, str(time_passed), 'white', (50, 90))
+    get_text(20, str(counter), 'white', (50, 30))
+
+    # get_text(20, player.color,  player.color,(50, 30))
+    # get_text(20, f'{player.loc[0]}, {player.loc[1]}', 'white', (50, 50))
+    # get_text(20, f'{map_loc[0]}, {map_loc[1]}', 'white', (50, 70))
+    # get_text(20, str(time_passed), 'white', (50, 90))
     pg.display.update()
