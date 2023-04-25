@@ -89,7 +89,8 @@ battle_finish = False
 encounter_part1 = True
 encounter_part2 = False
 encounter_part3 = False
-
+health_bar_update = False
+update_stats = False
 
 player_move1 = 'green'
 player_move2 = 'green'
@@ -127,12 +128,18 @@ move_options = ['Square Fury', 'Arrow Storm', 'Polyscare', 'Ridicule']
 def damage(attacker, move, opponent):
     if move == 'Square Fury':
         damage = attacker.move_stats[move]['Damage']  +   math.floor(attacker.move_stats[move]['Damage'] * attacker.multi)
+        if attacker.buff != 1:
+            damage *= player.buff
         debuff = 0
         buff = 0
         move_text = f'{attacker.name} dealt {damage} damage!'
 
+
+
     elif move == 'Arrow Storm':
         damage = attacker.multi*(attacker.move_stats[move]['Damage']  +   math.floor(attacker.move_stats[move]['Damage'] * attacker.multi)) if random.randint(1,100) <= 5 else attacker.move_stats[move]['Damage']  +   math.floor(attacker.move_stats[move]['Damage'] * attacker.multi)
+        if attacker.buff != 1:
+            damage *= player.buff
         buff = 0
         debuff = 0
         move_text = f'{attacker.name} dealt {damage} damage!'
@@ -161,6 +168,8 @@ class Entity:
         self.health = 68
         self.health_bar = 298
         self.defense = 40
+        self.buff = 1
+        self.debuff = 1
         self.move_stats = move_stats
 
 class Player(Entity):
@@ -687,10 +696,31 @@ while running:
                 
                 get_text(30, text1, 'black', (500, 250))
                 get_text(30, text2, 'black', (500, 300))
+                #health bar movement
+                
+
+
+                if health_bar_update:
+                    enemy.health_bar -= (2+player.multi)*(player.health_bar/(68-p_damage))
+                    player.health_bar -= (2+enemy.multi)*(enemy.health_bar/(68-e_damage))
+                    health_bar_update = False
+
+                if update_stats:
+                    player.health -= e_damage
+                    enemy.health -= p_damage
+                    player.buff += e_buff
+                    player.debuff += e_debuff
+                    enemy.buff += p_buff
+                    enemy.debuff += p_debuff
+
+                    update_stats = False
+
 
                 
 
                 if counter == -4:
+                    health_bar_update = True
+                    update_stats = True
                     player_move_choice = False
                     enemy_move_choice = False
                     counter = 4
@@ -698,7 +728,7 @@ while running:
                 
 
 
-#^^ making the damage function - will have 4 ifs that define variariables such as damage, buff and debuff. DO NOT have any stat changing code in the function, it will break things. have all of that after it is called.
+
 
                 
     
@@ -731,8 +761,8 @@ while running:
     mousePos = pg.mouse.get_pos()
     mouseX = mousePos[0]
     mouseY = mousePos[1]
-    get_text(20, f'{mouseX}, {mouseY}', 'white', (50, 10))
-    get_text(20, str(counter), 'white', (50, 30))
+    #get_text(20, f'{mouseX}, {mouseY}', 'grey', (mouseX, mouseY))
+    get_text(20, f'{str(player.health_bar)}, {str(enemy.health_bar)}', 'white', (500, 30))
 
     # get_text(20, player.color,  player.color,(50, 30))
     # get_text(20, f'{player.loc[0]}, {player.loc[1]}', 'white', (50, 50))
