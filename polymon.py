@@ -725,26 +725,6 @@ while running:
                     enemy_move_choice = False
                     counter = 4
 
-                
-
-
-
-
-                
-    
-
-
-
-            
-                
-
-
-            
-
-
-
-        
-               
 
 
 
