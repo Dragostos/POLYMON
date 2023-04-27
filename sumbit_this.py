@@ -300,9 +300,19 @@ while running:
     '''
     if start_menu == True:
         get_text(50, 'Welcome to Polymon!', 'white', (500, 25))
-        get_text(50, 'Press Start', 'white', (500,300))
-        get_text(50, 'Red', 'red', (250,500))
-        get_text(50, 'Blue', 'blue', (725,500))
+        if player.color == 'black':
+            get_text(50, 'Please select a color', 'white', (500, 300))
+            get_text(50, 'Red', 'red', (250,500))
+            get_text(50, 'Blue', 'blue', (725,500))
+        else:
+            get_text(50, 'Press Start', 'white', (500,300))
+        # get_text(50, 'Red', 'red', (250,500))
+        # get_text(50, 'Blue', 'blue', (725,500))
+        
+
+
+
+
 
         if event.type == pg.MOUSEBUTTONDOWN:
             if mouseX >= 155 and mouseX <= 344 and mouseY >= 480 and mouseY <= 520:
@@ -318,7 +328,10 @@ while running:
     Roaming
     '''
     if roaming == True: 
-        
+        if map_loc == [0,3]:
+            get_text(25, 'Use WASD keys to move your character', 'white', (500, 10))
+
+
         current_map, bools = eval(map_order[map_loc[1]][map_loc[0]])    
         
         if on_white == True:
