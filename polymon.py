@@ -621,7 +621,7 @@ while running:
                     player_move_choice = 'Ridicule'
                 if enemy_move_choice == False:
                     #enemy_move_choice = 'Square Fury'
-                    enemy_move_choice = 'Square Fury'
+                    enemy_move_choice = 'Ridicule'
                     #enemy_move_choice = random.choice(move_options)
                 
             
@@ -673,17 +673,22 @@ while running:
                
                 text1 = f'Player used {player_move_choice}!' if counter > 0 else f'Enemy used {enemy_move_choice}!'
                 text2 = p_text if counter > 0 else e_text
-                
                 get_text(30, text1, 'black', (500, 450))
                 get_text(30, text2, 'black', (500, 500))
+                # get_text(30, text1, 'black', (500, 450))
+                # get_text(30, text2, 'black', (500, 500))
                 #health bar movement
                 
 
+                
 
-                if health_bar_update:
-                    enemy.health_bar -= (5+player.multi)*(player.health_bar/(68-p_damage))
-                    player.health_bar -= (5+enemy.multi)*(enemy.health_bar/(68-e_damage))
+                if counter == 0 and health_bar_update:
+                    enemy.health_bar -= 0 if p_damage == 0 else math.floor( (5+player.multi)*(player.health_bar/(68-p_damage)) )
+                elif counter == -4 and health_bar_update:
+                    player.health_bar -= 0 if e_damage == 0 else math.floor( (5+enemy.multi)*(enemy.health_bar/(68-e_damage)) )
+                else:
                     health_bar_update = False
+                    
 
                 if update_stats:
                     player.health -= e_damage
@@ -697,13 +702,13 @@ while running:
 
 
                 
-
+                
                 if counter == -4:
-                    health_bar_update = True
                     update_stats = True
                     player_move_choice = False
                     enemy_move_choice = False
                     counter = 4
+                    
 
 
 
