@@ -1,38 +1,17 @@
 '''
-
-Concept: Very simple game, its a single pokemon themed battle between a blue square and a red square. You can choose to be either square, everything is the same.
-
-Updated Concept:
-    Simple entry screen, moves to like 9 or more pre-made maps. All together, it's one big map condensed into 'chunks' in minecraft terms.
-        prolly can just copy off of a pokemon map
-    You encounter squares, there will be different colors. there's the starters: Blue, and Red. Theres more such as Green, Blue, Purple and Yellow.
-    You can catch or defeat these squares which will level you up (max level 5); you start at level 1.
-    You can have a max of three Squares at a time.
-
-    Battles will be as follows: (will figure out who goes first later), once it's your turn after who goes first is decided then you select a choice
-    Your choices are Attack, Item, and (ill figure that out later).
-    Attack - You can use your moves
-    Item - Capture squares or repair square.
-    ??? - ???
-    
-    Idk how many moves i wanna make but we'll see. I could try and make a system that only requires three moves and you can upgrade these moves as you progress.
-    ^ i like that system. so im gonna try and make it.
-
-
-DUI idea
-    Legend
-    Goals
-
-Combat
-    Moves
-        Square fury
-            Is just tackle.
-        Arrow storm 
-            shoots arrows, has a chance to crit (damage+multi)
-        Polyscare
-            lowers the opponents defense
-        Ridicule
-            Boosts opponents attack but lowers their defense
+To-Do
+- move some of the code from the create task to this file which makes the start menu easier to understand
+    Predicted diff - Low
+- re-do stats with Brayden
+    Predicted diff - mid-high
+- IF^IS DONE: remake the damage/health bar issue
+    Predicted diff - mid-high
+- Make a minimap which shows where you are
+    Predicted diff - low
+- create a Legend (HUD)
+    Predicted diff - low-mid
+- Try to move code around to make it a little simpler/easier to understand
+    predicted diff - mid-high
 
 '''
 #python -m pip install -U --user pygame

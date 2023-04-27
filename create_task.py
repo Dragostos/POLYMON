@@ -10,41 +10,42 @@ pg.init()
 screen = pg.display.set_mode((1000,600))
 pg.display.set_caption("polymon")
 mouseX = 0
-mouseY = 0
+mouseY = 0  #inputs/UI inits
 pressed = 0
+
 bools = 0
-edges = [1,1]
+edges = [1,1]    #map variables
 current_map = False
-on_white = False
-on_green = False
 map_loc = [0,3]
+
+on_white = False
+    #map switch variables
 checked_switch = 0
 checked_edge = False
+
 running = True
-start_menu = True
+start_menu = True  #part seperation variables
 roaming = False
 end_menu = False
 
 class Entity:
     def __init__(self):
         self.color = 'black'
-
 class Player(Entity):
     def __init__(self):
-        super().__init__()
+        super().__init__()    #player init
         self.loc = [0,15]
         self.name = 'Player'
-
 player = Player()
 
 def get_text(font_size, text, color, text_center):
     font = pg.font.SysFont("Arial", font_size)
-    text = font.render(text, True, color)
+    text = font.render(text, True, color)    #text cmd
     textRect = text.get_rect()
     textRect.center = (text_center)
     screen.blit(text, textRect)
 
-def start_map():
+def start_map():   #start map
     map = 'start_map'
     block_x = 225
     block_y = 25
@@ -68,7 +69,7 @@ def start_map():
     
     return map, boolz
 
-def vert_line():
+def vert_line():   
     map = 'vert_line'
     block_x = 225
     block_y = 25
@@ -132,7 +133,6 @@ def cross():
 
 def corner(direction):
     map = 'corner'
-    defined = []
     if direction == 'down right': # if (most x) and ( y == top or y == bottom) or (x == left or x == right) and (up or down)
         boolz = [
             'x >= 7',
@@ -163,17 +163,17 @@ def corner(direction):
             ]
     block_x = 225
     block_y = 25
-    for y in range(16):
-        for x in range(16):
-            if eval(boolz[0]) and (y==7 or y==8) or ((x == 7 or x==8) and eval(boolz[1])):
+    for y in range(16):# creates the 16 y rows
+        for x in range(16): # creates the 16 x column for each of the y rows
+            if eval(boolz[0]) and (y==7 or y==8) or ((x == 7 or x==8) and eval(boolz[1])):  # determines the white path of the map
                 color = 'white'
             else:
                 color = 'green'
-            pg.draw.rect(screen, color, (block_x, block_y, 25, 25))
-            block_x += 35
-        block_y += 35
-        block_x = 225
-    return map, boolz
+            pg.draw.rect(screen, color, (block_x, block_y, 25, 25))  # draws a square in the given coordinate
+            block_x += 35 # changes the new block location x coord by 35
+        block_y += 35 # changes the y coord by 35, starting a new row
+        block_x = 225 # resets the x coord to start a new row
+    return map, boolz #returns the current map string, and the boolean expressions to be eval()'d
 
 def t_map(direction):
     map = 't_map'
@@ -237,17 +237,15 @@ map_order = [
 ]
 
 
-def game_won():
-    roaming = False
-    end_menu = True
+
 
 
 
 def check_switch():
     if (player.loc[1] == 0 and (player.loc[0] == 7 or player.loc[0] == 8)) or (player.loc[0] == 15 and (player.loc[1] == 7 or player.loc[1] == 8)) or (player.loc[1] == 15 and (player.loc[0] == 7 or player.loc[0] == 8)) or (player.loc[0] == 0 and (player.loc[1] == 7 or player.loc[1] == 8)):
         return True
-    elif map_loc[0] == 0 and map_loc[1] == 0 and (player.loc[0] == 7 or player.loc[0] == 8) and player.loc[1] == 0:
-        game_won()
+    # elif map_loc[0] == 0 and map_loc[1] == 0 and (player.loc[0] == 7 or player.loc[0] == 8) and player.loc[1] == 0:
+    #     game_won()
     else:
         return False
         
@@ -306,12 +304,6 @@ while running:
             get_text(50, 'Blue', 'blue', (725,500))
         else:
             get_text(50, 'Press Start', 'white', (500,300))
-        # get_text(50, 'Red', 'red', (250,500))
-        # get_text(50, 'Blue', 'blue', (725,500))
-        
-
-
-
 
 
         if event.type == pg.MOUSEBUTTONDOWN:
@@ -322,8 +314,6 @@ while running:
             elif mouseX >= 400 and mouseX <= 600 and mouseY >= 280 and mouseY <= 319:
               start_menu = False
               roaming = True
-
-
     '''
     Roaming
     '''
@@ -332,74 +322,51 @@ while running:
             get_text(25, 'Use WASD keys to move your character', 'white', (500, 10))
 
 
-        current_map, bools = eval(map_order[map_loc[1]][map_loc[0]])    
+        current_map, bools = eval(map_order[map_loc[1]][map_loc[0]])# calls and evals the functions in the map_order list 
         
         if on_white == True:
             checked_edge = check_switch()
         
-        if current_map == 'start_map':
+        if current_map == 'start_map': #checks the white/green coords
             if (player.loc[0] == 7 or player.loc[0] == 8) and player.loc[1] <= 8:
-                on_white = True
-                on_green = False
+                on_white = True  
             else:
-                on_white = False
-                on_green = True
+                on_white = False   
         elif current_map == 'vert_line':
             if player.loc[0] == 7 or player.loc[0] == 8:
-                on_white = True
-                on_green = False
+                on_white = True  
             else:
-                on_white = False 
-                on_green = True
+                on_white = False  
         elif current_map == 'hori_line':
             if player.loc[1] == 7 or player.loc[1] == 8:
                 on_white = True
-                on_green = False
             else:
                 on_white = False
-                on_green = True
         elif current_map == 'cross':
             if (player.loc[0]==7 or player.loc[0]==8) or (player.loc[1]==7 or player.loc[1]==8):
-                on_white = True
-                on_green = False
+                on_white = True 
             else:
                 on_white = False
-                on_green = True
         elif current_map == 'corner':
             if eval(bools[2]) and (player.loc[1]==7 or player.loc[1]==8) or ((player.loc[0] == 7 or player.loc[0]==8) and eval(bools[3])):
                 on_white = True
-                on_green = False
             else:
                 on_white = False
-                on_green = True
         elif current_map == 't_map':
             if eval(bools[3]) and eval(bools[4]) or eval(bools[5]):
                 on_white = True
-                on_green = False
             else:
                 on_white = False
-                on_green = True
-        
-
-    
-        pg.draw.rect(screen, player.color, (225+(35*player.loc[0]), 25+(35*player.loc[1]), 25 , 25  ) )
-        
         if (map_loc[0] == 0 and map_loc[1] == -1) and (player.loc[0] == 7 or player.loc[0] == 8) and player.loc[1] == 15:
             roaming = False
             end_menu = True
-
-
-
+        pg.draw.rect(screen, player.color, (225+(35*player.loc[0]), 25+(35*player.loc[1]), 25 , 25  ) )
 
     '''
     End menu
     '''
     if end_menu:
         get_text(30, "Congrats! You've explored all of Polymon. I hope you enjoyed it.", 'white', (500, 200))
-    
-
-
-
 
     mousePos = pg.mouse.get_pos()
     mouseX = mousePos[0]
