@@ -18,8 +18,7 @@ edges = [1,1]    #map variables
 current_map = False
 map_loc = [0,3]
 
-on_white = False
-    #map switch variables
+on_white = False    #map switch variables
 checked_switch = 0
 checked_edge = False
 
