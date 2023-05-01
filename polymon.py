@@ -675,36 +675,45 @@ while running:
                 text2 = p_text if counter > 0 else e_text
                 get_text(30, text1, 'black', (500, 450))
                 get_text(30, text2, 'black', (500, 500))
+                
+                
                 # get_text(30, text1, 'black', (500, 450))
                 # get_text(30, text2, 'black', (500, 500))
                 #health bar movement
                 
 
-                
 
-                if counter == 0 and health_bar_update:
-                    enemy.health_bar -= 0 if p_damage == 0 else math.floor( (5+player.multi)*(player.health_bar/(68-p_damage)) )
-                elif counter == -4 and health_bar_update:
-                    player.health_bar -= 0 if e_damage == 0 else math.floor( (5+enemy.multi)*(enemy.health_bar/(68-e_damage)) )
-                else:
-                    health_bar_update = False
+                # make it check for health bar stuff
+                player.health -= e_damage
+                enemy.health -= p_damage
+
+                player.health_bar = 298 - ( 298 * (player.health/68) )
+                
+                p_damage, e_damage = 0, 0
+
+                # if counter == 0 and health_bar_update:
+                #     enemy.health_bar -= 0 if p_damage == 0 else math.floor( (5+player.multi)*(player.health_bar/(68-p_damage)) )
+                # elif counter == -4 and health_bar_update:
+                #     player.health_bar -= 0 if e_damage == 0 else math.floor( (5+enemy.multi)*(enemy.health_bar/(68-e_damage)) )
+                # else:
+                #     health_bar_update = False
                     
 
-                if update_stats:
-                    player.health -= e_damage
-                    enemy.health -= p_damage
-                    player.buff += e_buff
-                    player.debuff += e_debuff
-                    enemy.buff += p_buff
-                    enemy.debuff += p_debuff
+                # if update_stats:
+                #     player.health -= e_damage
+                #     enemy.health -= p_damage
+                #     player.buff += e_buff
+                #     player.debuff += e_debuff
+                #     enemy.buff += p_buff
+                #     enemy.debuff += p_debuff
 
-                    update_stats = False
+                #     update_stats = False
 
 
                 
                 
                 if counter == -4:
-                    update_stats = True
+                    # update_stats = True
                     player_move_choice = False
                     enemy_move_choice = False
                     counter = 4
