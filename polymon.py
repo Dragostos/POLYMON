@@ -83,6 +83,9 @@ enemy_move4 = 'green'
 
 player_move_choice = False
 enemy_move_choice = False
+p_damage = 0
+e_damage = 0
+bar_change = 0
 
 move_stats = {
     'Square Fury' : {
@@ -525,37 +528,37 @@ while running:
     if battle:
         pg.draw.rect(screen, 'white', (100, 50, 800, 500)) #backdrop
 
-        if encounter_part1:# player init animation
-            pg.draw.rect(screen, 'black', (125, 475, 750, 50))
-            pg.draw.rect(screen, 'green', (130, 480, length_p, 40))
-            if time_passed % 1 == 0 and length_p <= 740:
-                length_p += 2*2
-            get_text(40, 'Loading Player Stats', 'black', (500, 100))
-            if length_p >= 740:
-                encounter_part2 = True
-                encounter_part1 = False
-        if encounter_part2: # enemy init animation
-            pg.draw.rect(screen, 'black', (125, 475, 750, 50))
-            pg.draw.rect(screen, 'green', (130, 480, length_e, 40))
-            if time_passed % 1 == 0 and length_e <= 740:
-                length_e += 2*2
-            get_text(40, 'Loading Enemy Stats', 'black', (500, 100))
-            if length_e >= 740:
-                encounter_part3 = True
-                encounter_part2 = False
-        if encounter_part3: #final animation
-            pg.draw.rect(screen, 'black', (125, 475, 750, 50))
-            pg.draw.rect(screen, 'green', (130, 480, length_b, 40))
-            if time_passed % 1 == 0 and length_b <= 740:
-                length_b += 2*2
-            get_text(40, 'Initializing Battle', 'black', (500, 100))
-            if length_b >= 740:
-                get_text(40, 'Complete', 'black', (500, 300))
-                encounter_part3 = False
+        # if encounter_part1:# player init animation
+        #     pg.draw.rect(screen, 'black', (125, 475, 750, 50))
+        #     pg.draw.rect(screen, 'green', (130, 480, length_p, 40))
+        #     if time_passed % 1 == 0 and length_p <= 740:
+        #         length_p += 2*2
+        #     get_text(40, 'Loading Player Stats', 'black', (500, 100))
+        #     if length_p >= 740:
+        #         encounter_part2 = True
+        #         encounter_part1 = False
+        # if encounter_part2: # enemy init animation
+        #     pg.draw.rect(screen, 'black', (125, 475, 750, 50))
+        #     pg.draw.rect(screen, 'green', (130, 480, length_e, 40))
+        #     if time_passed % 1 == 0 and length_e <= 740:
+        #         length_e += 2*2
+        #     get_text(40, 'Loading Enemy Stats', 'black', (500, 100))
+        #     if length_e >= 740:
+        #         encounter_part3 = True
+        #         encounter_part2 = False
+        # if encounter_part3: #final animation
+        #     pg.draw.rect(screen, 'black', (125, 475, 750, 50))
+        #     pg.draw.rect(screen, 'green', (130, 480, length_b, 40))
+        #     if time_passed % 1 == 0 and length_b <= 740:
+        #         length_b += 2*2
+        #     get_text(40, 'Initializing Battle', 'black', (500, 100))
+        #     if length_b >= 740:
+        #         get_text(40, 'Complete', 'black', (500, 300))
+        #         encounter_part3 = False
 
 
         #start battle
-
+        encounter_part1 = False
         if encounter_part1 == False and encounter_part2== False and encounter_part3 == False:
             
 
@@ -621,7 +624,7 @@ while running:
                     player_move_choice = 'Ridicule'
                 if enemy_move_choice == False:
                     #enemy_move_choice = 'Square Fury'
-                    enemy_move_choice = 'Ridicule'
+                    enemy_move_choice = 'Polyscare'
                     #enemy_move_choice = random.choice(move_options)
                 
             
@@ -684,12 +687,12 @@ while running:
 
 
                 # make it check for health bar stuff
-                player.health -= e_damage
-                enemy.health -= p_damage
+                # player.health -= e_damage
+                # enemy.health -= p_damage
 
-                player.health_bar = 298 - ( 298 * (player.health/68) )
+                # player.health_bar = 298 - ( 298 * (player.health/68) )
                 
-                p_damage, e_damage = 0, 0
+                # p_damage, e_damage = 0, 0
 
                 # if counter == 0 and health_bar_update:
                 #     enemy.health_bar -= 0 if p_damage == 0 else math.floor( (5+player.multi)*(player.health_bar/(68-p_damage)) )
@@ -713,9 +716,30 @@ while running:
                 
                 
                 if counter == -4:
-                    # update_stats = True
+                    if player_move_choice != False and enemy_move_choice != False:
+                        player.health -= e_damage
+                        enemy.health -= p_damage
+                        bar_change = math.floor( ( enemy.health_bar * (enemy.health/(enemy.health+p_damage)) ) )
+                        #print('health bar change:', bar_change)
+                    
+                    # print(enemy.health_bar, '-', bar_change, '=', str(enemy.health_bar - bar_change))
+                    
+                    
+                    # print(298 - bar_change)
+                    # print(e_bar_x, ' += ', (enemy.health_bar - bar_change))
+                    
+                    e_bar_x += enemy.health_bar - bar_change
+                    
+                    enemy.health_bar = bar_change
+
+
+
+
+                    p_damage, e_damage = 0, 0
+
                     player_move_choice = False
                     enemy_move_choice = False
+                    bar_change = 0
                     counter = 4
                     
 
@@ -738,7 +762,7 @@ while running:
     #get_text(20, f'{mouseX}, {mouseY}', 'grey', (mouseX, mouseY))
     get_text(20, f'{str(player.health_bar)}, {str(enemy.health_bar)}', 'white', (500, 30))
 
-    # get_text(20, player.color,  player.color,(50, 30))
+    get_text(20, f'{enemy.health}, {p_damage}, {enemy.health_bar}, {e_bar_x}, {bar_change}',  player.color,(70, 10))
     # get_text(20, f'{player.loc[0]}, {player.loc[1]}', 'white', (50, 50))
     # get_text(20, f'{map_loc[0]}, {map_loc[1]}', 'white', (50, 70))
     # get_text(20, str(time_passed), 'white', (50, 90))
