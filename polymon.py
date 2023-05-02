@@ -55,8 +55,6 @@ text1 = 'didnt work bozo'
 text2 = "didn't work either dum dum"
 e_bar_x = 536
 
-
-
 running = True
 
 start_menu = True
@@ -96,11 +94,11 @@ move_stats = {
         'Damage': 2
     },
     'Polyscare': {
-        'Debuff': 1.5
+        'Debuff': 1.1
     },
     'Ridicule': {
-        'Attack Buff Increase': 1.5,
-        'Defense Debuff Decrease': 1.5
+        'Attack Buff Increase': 1.1,
+        'Defense Debuff Decrease': 1.1
     }
 }
 
@@ -109,7 +107,7 @@ move_options = ['Square Fury', 'Arrow Storm', 'Polyscare', 'Ridicule']
 
 def damage(attacker, move, opponent):
     if move == 'Square Fury':
-        damage = attacker.move_stats[move]['Damage']  +   math.floor(attacker.move_stats[move]['Damage'] * attacker.multi)
+        damage = attacker.move_stats[move]['Damage']
         if attacker.buff != 1:
             damage *= player.buff
         debuff = 0
@@ -119,7 +117,7 @@ def damage(attacker, move, opponent):
 
 
     elif move == 'Arrow Storm':
-        damage = attacker.multi*(attacker.move_stats[move]['Damage']  +   math.floor(attacker.move_stats[move]['Damage'] * attacker.multi)) if random.randint(1,100) <= 5 else attacker.move_stats[move]['Damage']  +   math.floor(attacker.move_stats[move]['Damage'] * attacker.multi)
+        damage = attacker.multi*(attacker.move_stats[move]['Damage']  +   math.floor(attacker.move_stats[move]['Damage'] * attacker.buff)) if random.randint(1,100) <= 5 else attacker.move_stats[move]['Damage']  +   math.floor(attacker.move_stats[move]['Damage'] * attacker.buff)
         if attacker.buff != 1:
             damage *= player.buff
         buff = 0
@@ -146,12 +144,11 @@ class Entity:
     def __init__(self):
         self.color = 'black'
         self.level = 1
-        self.multi = self.level * 1.5
-        self.health = 68
+        self.health = 68 + ((self.level - 1) *2)
         self.health_bar = 298
-        self.defense = 40
+        self.defense = 40 + ((self.level - 2) * 1.5)
         self.buff = 1
-        self.debuff = 1
+        # self.debuff = 1
         self.move_stats = move_stats
 
 class Player(Entity):
@@ -437,9 +434,12 @@ while running:
     '''
     if start_menu == True:
         get_text(50, 'Welcome to Polymon!', 'white', (500, 25))
-        get_text(50, 'Press Start', 'white', (500,300))
-        get_text(50, 'Team Red', 'red', (250,500))
-        get_text(50, 'Team Blue', 'blue', (725,500))
+        if player.color == 'black':
+            get_text(50, 'Please select a color', 'white', (500, 300))
+            get_text(50, 'Red', 'red', (250,500))
+            get_text(50, 'Blue', 'blue', (725,500))
+        else:
+            get_text(50, 'Press Start', 'white', (500,300))
         
 
 
