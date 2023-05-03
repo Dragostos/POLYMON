@@ -178,7 +178,7 @@ def start_map():
     block_y = 25
     boolz = [
             'x == 7 or x == 8',
-            'y >= 7',
+            'y <= 8',
             'player.loc[0] == 7 or player.loc[0] == 8',
             'player.loc[1] >= 7'
             ]
@@ -260,8 +260,8 @@ def cross():
 
 def corner(direction):
     map = 'corner'
-    defined = []
-    if direction == 'down right': # if (most x) and ( y == top or y == bottom) or (x == left or x == right) and (up or down)
+    defined = []# if (most x) and ( y == top or y == bottom) or (x == left or x == right) and (up or down)
+    if direction == 'down right': 
         boolz = [
             'x >= 7',
             'y > 8',
@@ -341,7 +341,6 @@ def t_map(direction):
             'player.loc[0] <= 8',
             'player.loc[0] == 7 or player.loc[0] == 8'
         ]
-
     block_x = 225
     block_y = 25
     for y in range(16):
@@ -377,27 +376,26 @@ def encounter():
     battle = True
 
 
-
-
-
-
 while running:
     for event in pg.event.get():
         if event.type == pg.QUIT:   
             pg.quit()
             sys.exit()
-        if event.type == pg.KEYDOWN and roaming:
+        if event.type == pg.KEYDOWN and roaming:  #normal moving
             if event.key == pg.K_w and player.loc[1] >= 1:
                 player.loc[1] -= 1
+                #print("up")
             elif event.key == pg.K_a and player.loc[0] >= 1: 
                 player.loc[0] -= 1
+                #print('left')
             elif event.key == pg.K_s and player.loc[1] <= 14:  #s
                 player.loc[1] += 1
+                #print('down')
             elif event.key == pg.K_d and player.loc[0] <= 14:
                 player.loc[0] += 1
-
-
-        if event.type == pg.KEYDOWN and checked_edge:
+                #print('right')
+        
+        if event.type == pg.KEYDOWN and checked_edge: #map moving
             if event.key == pg.K_w and player.loc[1] == 0:  #w
                 map_loc[1] -= 1
                 player.loc[1] = 15
@@ -411,21 +409,17 @@ while running:
                 map_loc[0] += 1
                 player.loc[0] = 0
             checked_edge = False
-            
 
         if event.type == timer_event and on_green == True:  # encounter
             time_passed += 1
             if time_passed % 1 == 0:
                 encounter()
-            else:
-                print("hello")
+                print("encounter")
         
         if event.type == timer_event and enemy_move_choice != False and player_move_choice != False:
             counter -= 1
             
-            
-            
-        
+      
     screen.fill('black')
 
 
@@ -510,15 +504,6 @@ while running:
                 on_white = False
                 on_green = True
         
-
-        
-        # get_text(20, f'White: {on_white}', 'white', (900, 10))
-        # get_text(20, f'Green: {on_green}', 'green', (900, 30))
-        # get_text(20, f'Edge: {checked_edge}', 'white', (900, 50))
-        # get_text(20, current_map, 'red', (900, 70))
-        # get_text(20, map_order[map_loc[1]][map_loc[0]], 'red', (900, 90))
-        
-        
         pg.draw.rect(screen, player.color, (225+(35*player.loc[0]), 25+(35*player.loc[1]), 25 , 25  ) )
 
 
@@ -556,15 +541,9 @@ while running:
         #         get_text(40, 'Complete', 'black', (500, 300))
         #         encounter_part3 = False
 
-
         #start battle
         encounter_part1 = False
         if encounter_part1 == False and encounter_part2== False and encounter_part3 == False:
-            
-
-            #get_text(20, 'I', 'black', (500, 50)) #middle
-            
-            
             
             pg.draw.rect(screen, 'grey', (165,55, 300, 17))  #player 
             pg.draw.rect(screen, 'green', (166, 56, player.health_bar, 15))
@@ -623,8 +602,8 @@ while running:
                     player_move4 = player.color
                     player_move_choice = 'Ridicule'
                 if enemy_move_choice == False:
-                    #enemy_move_choice = 'Square Fury'
-                    enemy_move_choice = 'Polyscare'
+                    enemy_move_choice = 'Square Fury'
+                    #enemy_move_choice = 'Polyscare'
                     #enemy_move_choice = random.choice(move_options)
                 
             
@@ -685,53 +664,23 @@ while running:
                 #health bar movement
                 
 
-
-                # make it check for health bar stuff
-                # player.health -= e_damage
-                # enemy.health -= p_damage
-
-                # player.health_bar = 298 - ( 298 * (player.health/68) )
-                
-                # p_damage, e_damage = 0, 0
-
-                # if counter == 0 and health_bar_update:
-                #     enemy.health_bar -= 0 if p_damage == 0 else math.floor( (5+player.multi)*(player.health_bar/(68-p_damage)) )
-                # elif counter == -4 and health_bar_update:
-                #     player.health_bar -= 0 if e_damage == 0 else math.floor( (5+enemy.multi)*(enemy.health_bar/(68-e_damage)) )
-                # else:
-                #     health_bar_update = False
-                    
-
-                # if update_stats:
-                #     player.health -= e_damage
-                #     enemy.health -= p_damage
-                #     player.buff += e_buff
-                #     player.debuff += e_debuff
-                #     enemy.buff += p_buff
-                #     enemy.debuff += p_debuff
-
-                #     update_stats = False
-
-
                 
                 
                 if counter == -4:
                     if player_move_choice != False and enemy_move_choice != False:
-                        player.health -= e_damage
-                        enemy.health -= p_damage
-                        bar_change = math.floor( ( enemy.health_bar * (enemy.health/(enemy.health+p_damage)) ) )
-                        #print('health bar change:', bar_change)
+                        player.health -= e_damage #removing health from the entitties health stat
+                        enemy.health -= p_damage  #^^
+                        
+                        bar_change_e = math.floor( ( enemy.health_bar * (enemy.health/(enemy.health+p_damage)) ) )
+                        print(math.floor( ( player.health_bar * (player.health/(player.health+e_damage)) ) ))
+                        bar_change_p = math.floor( ( player.health_bar * (player.health/(player.health+e_damage)) ) )
                     
-                    # print(enemy.health_bar, '-', bar_change, '=', str(enemy.health_bar - bar_change))
+                    e_bar_x += enemy.health_bar - bar_change_e
                     
-                    
-                    # print(298 - bar_change)
-                    # print(e_bar_x, ' += ', (enemy.health_bar - bar_change))
-                    
-                    e_bar_x += enemy.health_bar - bar_change
-                    
-                    enemy.health_bar = bar_change
 
+
+                    enemy.health_bar = bar_change_e
+                    player.health_bar = bar_change_p
 
 
 
@@ -739,7 +688,7 @@ while running:
 
                     player_move_choice = False
                     enemy_move_choice = False
-                    bar_change = 0
+                    bar_change_e, bar_change_p = 0, 0 
                     counter = 4
                     
 
@@ -760,9 +709,10 @@ while running:
     mouseX = mousePos[0]
     mouseY = mousePos[1]
     #get_text(20, f'{mouseX}, {mouseY}', 'grey', (mouseX, mouseY))
-    get_text(20, f'{str(player.health_bar)}, {str(enemy.health_bar)}', 'white', (500, 30))
+    get_text(20, f'{str(player.health_bar)}, {str(enemy.health_bar)}', 'white', (30, 10))
+    get_text(20, f'{str(player.health)}, {str(enemy.health)}', 'white', (30, 30))
 
-    get_text(20, f'{enemy.health}, {p_damage}, {enemy.health_bar}, {e_bar_x}, {bar_change}',  player.color,(70, 10))
+    #get_text(20, f'{enemy.health}, {p_damage}, {enemy.health_bar}, {e_bar_x}, {bar_change}',  player.color,(70, 10))
     # get_text(20, f'{player.loc[0]}, {player.loc[1]}', 'white', (50, 50))
     # get_text(20, f'{map_loc[0]}, {map_loc[1]}', 'white', (50, 70))
     # get_text(20, str(time_passed), 'white', (50, 90))
