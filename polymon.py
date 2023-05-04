@@ -107,7 +107,9 @@ move_options = ['Square Fury', 'Arrow Storm', 'Polyscare', 'Ridicule']
 
 def damage(attacker, move, opponent):
     if move == 'Square Fury':
-        damage = attacker.move_stats[move]['Damage']
+        damage = ((     ((2*attacker.level)/5 + 2) * (opponent.health/opponent.defense)  )/50 +2      )
+        
+        #attacker.move_stats[move]['Damage']
         if attacker.buff != 1:
             damage *= player.buff
         debuff = 0
@@ -117,18 +119,24 @@ def damage(attacker, move, opponent):
 
 
     elif move == 'Arrow Storm':
-        damage = attacker.multi*(attacker.move_stats[move]['Damage']  +   math.floor(attacker.move_stats[move]['Damage'] * attacker.buff)) if random.randint(1,100) <= 5 else attacker.move_stats[move]['Damage']  +   math.floor(attacker.move_stats[move]['Damage'] * attacker.buff)
-        if attacker.buff != 1:
-            damage *= player.buff
+        if random.randint(1,100) <= attacker.move_stats[move]['Chance']:
+            damage = (attacker.move_stats[move]['Damage'] + math.floor(attacker.move_stats[move]['Damage'] * attacker.buff))
+        else:
+            damage = attacker.move_stats[move]['Damage']
         buff = 0
         debuff = 0
-        move_text = f'{attacker.name} dealt {damage} damage!'
+        move_text = f'{attacker.name} dealt {damage} damage!'  #updates contiously instead of once
+
+
+
 
     elif move == 'Polyscare':
         damage = 0
         buff = 0
         debuff = opponent.defense * .05
         move_text = f"{opponent.name}'s defense lowered!"
+
+
 
     elif move == 'Ridicule':
         damage = 0
@@ -414,7 +422,6 @@ while running:
             time_passed += 1
             if time_passed % 1 == 0:
                 encounter()
-                print("encounter")
         
         if event.type == timer_event and enemy_move_choice != False and player_move_choice != False:
             counter -= 1
@@ -650,6 +657,7 @@ while running:
                 enemy_move1, enemy_move2, enemy_move3, enemy_move4 = 'green','green','green','green'
 
             if enemy_move_choice != False and player_move_choice != False:
+                player.level = 2
                 p_damage, p_text, p_buff, p_debuff = damage(Player(), player_move_choice, Enemy())
                 e_damage, e_text, e_buff, e_debuff = damage(Enemy(), enemy_move_choice, Player())
                
@@ -689,7 +697,7 @@ while running:
                     player_move_choice = False
                     enemy_move_choice = False
                     bar_change_e, bar_change_p = 0, 0 
-                    counter = 4
+                    counter = 2
                     
 
 
