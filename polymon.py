@@ -87,10 +87,11 @@ bar_change = 0
 
 move_stats = {
     'Square Fury' : {
-        'Damage': 2
+        'Damage': 2,
+        'Power': 35
     },
     'Arrow Storm': {
-        'Chance': 5,
+        'Chance': 1,
         'Damage': 2
     },
     'Polyscare': {
@@ -132,7 +133,7 @@ enemy = Enemy()
 
 def damage(attacker, move, opponent):
     if move == 'Square Fury':
-        damage = math.ceil( ( ( ( (2*attacker.level)/5 + 2) * (opponent.health/opponent.defense))/50 +2  )  )
+        damage =    math.floor(  ((     ((2*attacker.level)/5 + 2) * attacker.move_stats[move]['Power'] * (opponent.health/opponent.defense)  )/50 +2      )     )
         
         #attacker.move_stats[move]['Damage']
         # if attacker.buff != 1:
