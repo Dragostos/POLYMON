@@ -105,13 +105,38 @@ move_stats = {
 move_options = ['Square Fury', 'Arrow Storm', 'Polyscare', 'Ridicule']
 
 
+class Entity:
+    def __init__(self):
+        self.color = 'black'
+        self.level = 2
+        self.health = 68 + ((self.level - 1) *2)
+        self.health_bar = 298
+        self.defense = 40 + ((self.level - 2) * 1.5)
+        self.buff = 1
+        # self.debuff = 1
+        self.move_stats = move_stats
+
+class Player(Entity):
+    def __init__(self):
+        super().__init__()
+        self.loc = [0,15]
+        self.name = 'Player'
+
+class Enemy(Entity):
+    def __init__(self):
+        super().__init__()
+        self.name = 'Enemy'
+
+player = Player()
+enemy = Enemy()
+
 def damage(attacker, move, opponent):
     if move == 'Square Fury':
-        damage = ((     ((2*attacker.level)/5 + 2) * (opponent.health/opponent.defense)  )/50 +2      )
+        damage = math.ceil( ( ( ( (2*attacker.level)/5 + 2) * (opponent.health/opponent.defense))/50 +2  )  )
         
         #attacker.move_stats[move]['Damage']
-        if attacker.buff != 1:
-            damage *= player.buff
+        # if attacker.buff != 1:
+        #     damage *= player.buff
         debuff = 0
         buff = 0
         move_text = f'{attacker.name} dealt {damage} damage!'
@@ -146,32 +171,6 @@ def damage(attacker, move, opponent):
     
     return damage, move_text, buff, debuff
 
-
-
-class Entity:
-    def __init__(self):
-        self.color = 'black'
-        self.level = 1
-        self.health = 68 + ((self.level - 1) *2)
-        self.health_bar = 298
-        self.defense = 40 + ((self.level - 2) * 1.5)
-        self.buff = 1
-        # self.debuff = 1
-        self.move_stats = move_stats
-
-class Player(Entity):
-    def __init__(self):
-        super().__init__()
-        self.loc = [0,15]
-        self.name = 'Player'
-
-class Enemy(Entity):
-    def __init__(self):
-        super().__init__()
-        self.name = 'Enemy'
-
-player = Player()
-enemy = Enemy()
 
 def get_text(font_size, text, color, text_center):
     font = pg.font.SysFont("Arial", font_size)
