@@ -87,6 +87,8 @@ p_damage = 0
 e_damage = 0
 bar_change = 0
 
+
+
 move_stats = {
     'Square Fury' : {
         'Damage': 2,
@@ -118,7 +120,7 @@ class Entity:
         self.health = 68 + ((self.level - 1) *2)
         self.health_bar = 298
         self.defense = 40 + ((self.level - 2) * 1.5)
-        self.buff = 1
+        # self.buff = 1
         # self.debuff = 1
         self.move_stats = move_stats
 
@@ -719,8 +721,8 @@ while running:
     mouseX = mousePos[0]
     mouseY = mousePos[1]
     #get_text(20, f'{mouseX}, {mouseY}', 'grey', (mouseX, mouseY))
-    get_text(20, f'{str(player.health_bar)}, {str(enemy.health_bar)}', 'white', (30, 10))
-    get_text(20, f'{str(player.health)}, {str(enemy.health)}', 'white', (30, 30))
+    get_text(20, f'{str(player.defense)}, {str(enemy.defense)}', 'white', (40, 10))
+    get_text(20, f'{str(player.health)}, {str(enemy.health)}', 'white', (40, 30))
 
     #get_text(20, f'{enemy.health}, {p_damage}, {enemy.health_bar}, {e_bar_x}, {bar_change}',  player.color,(70, 10))
     # get_text(20, f'{player.loc[0]}, {player.loc[1]}', 'white', (50, 50))
