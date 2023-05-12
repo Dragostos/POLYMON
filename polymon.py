@@ -88,50 +88,39 @@ e_damage = 0
 bar_change = 0
 
 move_list = {
-    'Square Fury' : {
+    'Poly Tackle' : {
         'Damage': 2,
         'Power': 35,
         'Accuracy': 90,
-        'Name': 'Square Fury'
+        'Name': 'Poly Tackle',
+        'Type': 'Physical'
     },
-    'Arrow Storm': {
+    'Square Fury': {
         'Chance': 10,
         'Damage': 2,
         'Power': 35,
-        'Accuracy': 90
+        'Accuracy': 90,
+        'Name': 'Square Fury',
+
     },
     'Polyscare': {
-        'Debuff': 1.1
+        'Debuff': 1.1,
+        'Name': 'Polyscare'
     },
     'Ridicule': {
         'Attack Buff Increase': 1.1,
-        'Defense Debuff Decrease': 1.1
+        'Defense Debuff Decrease': 1.1,
+        'Name': 'Ridicule'
     }}
 
 moves_equipped = {
-    'move 1':move_list['Square Fury'],
-    
-    # 'Square Fury' : {
-    #     'Damage': 2,
-    #     'Power': 35,
-    #     'Accuracy': 90
-    # },
-    'Arrow Storm': {
-        'Chance': 10,
-        'Damage': 2,
-        'Power': 35,
-        'Accuracy': 90
-    },
-    'Polyscare': {
-        'Debuff': 1.1
-    },
-    'Ridicule': {
-        'Attack Buff Increase': 1.1,
-        'Defense Debuff Decrease': 1.1
-    }
+    'move 1' : move_list['Poly Tackle'],
+    'move 2' : move_list['Square Fury'],
+    'move 3' : move_list['Polyscare'],
+    'move 4' : move_list['Ridicule']
 }
-print(moves_equipped['move 1'])
-move_options = ['Square Fury', 'Arrow Storm', 'Polyscare', 'Ridicule']
+
+move_options = ['Poly Tackle', 'Square Fury', 'Polyscare', 'Ridicule']
 
 
 class Entity:
@@ -156,49 +145,53 @@ class Enemy(Entity):
         super().__init__()
         self.name = 'Enemy'
 
+
+
+
+
 player = Player()
 enemy = Enemy()
 
 def get_damage(attacker, move, opponent, color):
     if move == 'move 1':
-        damage =    math.floor(((((2*attacker.level)/5 + 2)*attacker.moves_equipped[move]['Power']*(opponent.health/opponent.defense))/50+2))
+        a_damage =    math.floor(((((2*attacker.level)/5 + 2)*attacker.moves_equipped[move]['Power']*(opponent.health/opponent.defense))/50+2))
         
-        #attacker.moves_equipped[move]['Damage']
-        # if attacker.buff != 1:
-        #     damage *= player.buff
-        debuff = 0
-        buff = 0
-        move_text = f'{color} dealt {damage} damage!'
+        #attacker.moves_equipped[move]['a_damage']
+        # if attacker.a_buff != 1:
+        #     a_damage *= player.a_buff
+        a_debuff = 0
+        a_buff = 0
+        move_text = f'{color} dealt {a_damage} damage!'
 
 
 
-    elif move == 'Arrow Storm':
+    elif move == 'move 2':
         if random.randint(1,100) <= attacker.moves_equipped[move]['Chance']:
-            damage = math.floor(((((2*attacker.level)/5 + 2)*(attacker.moves_equipped[move]['Power']*2)*(opponent.health/opponent.defense))/50+2))
+            a_damage = math.floor(((((2*attacker.level)/5 + 2)*(attacker.moves_equipped[move]['Power']*2)*(opponent.health/opponent.defense))/50+2))
         else:
-            damage = math.floor(((((2*attacker.level)/5 + 2)*attacker.moves_equipped[move]['Power']*(opponent.health/opponent.defense))/50+2))
-        buff = 0
-        debuff = 0
-        move_text = f'{color} dealt {damage} damage!' 
+            a_damage = math.floor(((((2*attacker.level)/5 + 2)*attacker.moves_equipped[move]['Power']*(opponent.health/opponent.defense))/50+2))
+        a_buff = 0
+        a_debuff = 0
+        move_text = f'{color} dealt {a_damage} damage!' 
 
 
 
 
-    elif move == 'Polyscare':
-        damage = 0
-        buff = 0
-        debuff = opponent.defense * .05
+    elif move == 'move 3':
+        a_damage = 0
+        a_buff = 0
+        a_debuff = opponent.defense * .05
         move_text = f"{color}'s defense lowered!"
 
 
 
-    elif move == 'Ridicule':
-        damage = 0
-        debuff = opponent.defense * .10
-        buff = opponent.multi + (opponent.multi * 0.5)
+    elif move == 'move 3':
+        a_damage = 0
+        a_debuff = opponent.defense * .10
+        a_buff = opponent.multi + (opponent.multi * 0.5)
         move_text = f"{color}'s defense lowered and atttack increased!'"
     
-    return damage, move_text, buff, debuff
+    return a_damage, move_text, a_buff, a_debuff
 
 
 def get_text(font_size, text, color, text_center):
@@ -412,6 +405,7 @@ def encounter():
     battle = True
 
 
+
 while running:
     for event in pg.event.get():
         if event.type == pg.QUIT:   
@@ -587,7 +581,7 @@ while running:
             pg.draw.circle(screen, player_move1, (130,150), 25)
             pg.draw.circle(screen, player_move1, (230,150), 25)
             pg.draw.rect(screen, player_move1, (130, 125, 100,50))
-            get_text(20, "Square Fury", 'black', (180, 150))
+            get_text(20, player.moves_equipped['move 1']['Name'], 'black', (180, 150))
             if mouseX >= 105 and mouseX <= 255 and mouseY >= 125 and mouseY <= 175 and player_move_choice == False:
                 player_move1 = 'gold'
             elif player_move_choice == False:
@@ -597,7 +591,7 @@ while running:
             pg.draw.circle(screen, player_move2, (130,210), 25)
             pg.draw.circle(screen, player_move2, (230,210), 25)
             pg.draw.rect(screen, player_move2, (130, 185, 100,50))
-            get_text(20, "Arrow Storm", 'black', (180, 210))
+            get_text(20, player.moves_equipped['move 2']['Name'], 'black', (180, 210))
             if mouseX >= 105 and mouseX <= 255 and mouseY >= 185 and mouseY <= 235 and player_move_choice == False:
                 player_move2 = 'gold'
             elif player_move_choice == False:
@@ -606,7 +600,7 @@ while running:
             pg.draw.circle(screen, player_move3, (130,270), 25)
             pg.draw.circle(screen, player_move3, (230,270), 25)
             pg.draw.rect(screen, player_move3, (130, 245, 100,50))
-            get_text(20, "Polyscare", 'black', (180, 270))
+            get_text(20, player.moves_equipped['move 3']['Name'], 'black', (180, 270))
             if mouseX >= 105 and mouseX <= 255 and mouseY >= 245 and mouseY <= 295 and player_move_choice == False:
                 player_move3 = 'gold'
             elif player_move_choice == False:
@@ -615,7 +609,7 @@ while running:
             pg.draw.circle(screen, player_move4, (130,330), 25)
             pg.draw.circle(screen, player_move4, (230,330), 25)
             pg.draw.rect(screen, player_move4, (130, 305, 100,50))
-            get_text(20, "Ridicule", 'black', (180, 330))
+            get_text(20, player.moves_equipped['move 4']['Name'], 'black', (180, 330))
             if mouseX >= 105 and mouseX <= 255 and mouseY >= 305 and mouseY <= 355 and player_move_choice == False:
                 player_move4 = 'gold'
             elif player_move_choice == False:
@@ -627,13 +621,13 @@ while running:
                     player_move_choice = 'move 1'
                 elif player_move2 == 'gold':
                     player_move2 = player.color
-                    player_move_choice = 'Arrow Storm'
+                    player_move_choice = 'move 2'
                 elif player_move3 == 'gold':
                     player_move3 = player.color
-                    player_move_choice = 'Polyscare'
+                    player_move_choice = 'move 3'
                 elif player_move4 == 'gold':
                     player_move4 = player.color
-                    player_move_choice = 'Ridicule'
+                    player_move_choice = 'move 4'
                 if enemy_move_choice == False:
                     enemy_move_choice = 'Square Fury'
                     #enemy_move_choice = 'Polyscare'
@@ -654,22 +648,22 @@ while running:
             pg.draw.circle(screen, enemy_move1, (870,150), 25)
             pg.draw.circle(screen, enemy_move1, (770,150), 25)
             pg.draw.rect(screen, enemy_move1, (770, 125, 100,50))
-            get_text(20, "Square Fury", 'black', (820, 150))
+            get_text(20, enemy.moves_equipped['move 1']['Name'], 'black', (820, 150))
             
             pg.draw.circle(screen, enemy_move2, (870,210), 25)
             pg.draw.circle(screen, enemy_move2, (770,210), 25)
             pg.draw.rect(screen, enemy_move2, (770, 185, 100,50))
-            get_text(20, "Arrow Storm", 'black', (820, 210))
+            get_text(20, enemy.moves_equipped['move 2']['Name'], 'black', (820, 210))
 
             pg.draw.circle(screen, enemy_move3, (870,270), 25)
             pg.draw.circle(screen, enemy_move3, (770,270), 25)
             pg.draw.rect(screen, enemy_move3, (770, 245, 100,50))
-            get_text(20, "Polyscare", 'black', (820, 270))
+            get_text(20, enemy.moves_equipped['move 3']['Name'], 'black', (820, 270))
 
             pg.draw.circle(screen, enemy_move4, (870,330), 25)
             pg.draw.circle(screen, enemy_move4, (770,330), 25)
             pg.draw.rect(screen, enemy_move4, (770, 305, 100,50))
-            get_text(20, "Ridicule", 'black', (820, 330))
+            get_text(20, enemy.moves_equipped['move 4']['Name'], 'black', (820, 330))
 
             if enemy_move_choice == move_options[0]:
                 enemy_move1 = enemy.color
@@ -691,8 +685,8 @@ while running:
                     e_damage, e_text, e_buff, e_debuff = get_damage(Enemy(), enemy_move_choice, Player(), enemy.color)
                     getting_damage_e = False
                
-
-                text1 = f'{player.color} used {moves_equipped[player_move_choice]['Name']}!' if counter > 0 else f'{enemy.color} used {enemy_move_choice}!'
+                
+                text1 = f"{player.color} used { moves_equipped[player_move_choice]['Name'] }!" if counter > 0 else f'{enemy.color} used {enemy_move_choice}!'
                 text2 = p_text if counter > 0 else e_text
                 get_text(30, text1, 'black', (500, 450))
                 get_text(30, text2, 'black', (500, 500))
@@ -716,12 +710,14 @@ while running:
 
 
                     p_damage, e_damage = 0, 0
+                    print(moves_equipped[player_move_choice]['Name'])
 
                     player_move_choice = False
                     enemy_move_choice = False
                     bar_change_e, bar_change_p = 0, 0
                     getting_damage_p, getting_damage_e = True, True 
                     player.level += 1
+                    
                     counter = 2
 
                     
