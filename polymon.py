@@ -87,14 +87,35 @@ p_damage = 0
 e_damage = 0
 bar_change = 0
 
-
-
-move_stats = {
+move_list = {
     'Square Fury' : {
+        'Damage': 2,
+        'Power': 35,
+        'Accuracy': 90,
+        'Name': 'Square Fury'
+    },
+    'Arrow Storm': {
+        'Chance': 10,
         'Damage': 2,
         'Power': 35,
         'Accuracy': 90
     },
+    'Polyscare': {
+        'Debuff': 1.1
+    },
+    'Ridicule': {
+        'Attack Buff Increase': 1.1,
+        'Defense Debuff Decrease': 1.1
+    }}
+
+moves_equipped = {
+    'move 1':move_list['Square Fury'],
+    
+    # 'Square Fury' : {
+    #     'Damage': 2,
+    #     'Power': 35,
+    #     'Accuracy': 90
+    # },
     'Arrow Storm': {
         'Chance': 10,
         'Damage': 2,
@@ -109,20 +130,20 @@ move_stats = {
         'Defense Debuff Decrease': 1.1
     }
 }
-
+print(moves_equipped['move 1'])
 move_options = ['Square Fury', 'Arrow Storm', 'Polyscare', 'Ridicule']
 
 
 class Entity:
     def __init__(self):
         self.color = 'black'
-        self.level = 10
+        self.level = 1
         self.health = 68 + ((self.level - 1) *2)
         self.health_bar = 298
         self.defense = 40 + ((self.level - 2) * 1.5)
         # self.buff = 1
         # self.debuff = 1
-        self.move_stats = move_stats
+        self.moves_equipped = moves_equipped
 
 class Player(Entity):
     def __init__(self):
@@ -138,11 +159,11 @@ class Enemy(Entity):
 player = Player()
 enemy = Enemy()
 
-def damage(attacker, move, opponent, color):
-    if move == 'Square Fury':
-        damage =    math.floor(((((2*attacker.level)/5 + 2)*attacker.move_stats[move]['Power']*(opponent.health/opponent.defense))/50+2))
+def get_damage(attacker, move, opponent, color):
+    if move == 'move 1':
+        damage =    math.floor(((((2*attacker.level)/5 + 2)*attacker.moves_equipped[move]['Power']*(opponent.health/opponent.defense))/50+2))
         
-        #attacker.move_stats[move]['Damage']
+        #attacker.moves_equipped[move]['Damage']
         # if attacker.buff != 1:
         #     damage *= player.buff
         debuff = 0
@@ -152,10 +173,10 @@ def damage(attacker, move, opponent, color):
 
 
     elif move == 'Arrow Storm':
-        if random.randint(1,100) <= attacker.move_stats[move]['Chance']:
-            damage = math.floor(((((2*attacker.level)/5 + 2)*(attacker.move_stats[move]['Power']*2)*(opponent.health/opponent.defense))/50+2))
+        if random.randint(1,100) <= attacker.moves_equipped[move]['Chance']:
+            damage = math.floor(((((2*attacker.level)/5 + 2)*(attacker.moves_equipped[move]['Power']*2)*(opponent.health/opponent.defense))/50+2))
         else:
-            damage = math.floor(((((2*attacker.level)/5 + 2)*attacker.move_stats[move]['Power']*(opponent.health/opponent.defense))/50+2))
+            damage = math.floor(((((2*attacker.level)/5 + 2)*attacker.moves_equipped[move]['Power']*(opponent.health/opponent.defense))/50+2))
         buff = 0
         debuff = 0
         move_text = f'{color} dealt {damage} damage!' 
@@ -603,7 +624,7 @@ while running:
             if event.type == pg.MOUSEBUTTONDOWN:
                 if player_move1 == 'gold':
                     player_move1 = player.color
-                    player_move_choice = 'Square Fury'
+                    player_move_choice = 'move 1'
                 elif player_move2 == 'gold':
                     player_move2 = player.color
                     player_move_choice = 'Arrow Storm'
@@ -664,14 +685,14 @@ while running:
             if enemy_move_choice != False and player_move_choice != False:
                 
                 if counter == 2 and getting_damage_p == True:
-                    p_damage, p_text, p_buff, p_debuff = damage( Player(), player_move_choice, Enemy(), player.color )
+                    p_damage, p_text, p_buff, p_debuff = get_damage( Player(), player_move_choice, Enemy(), player.color )
                     getting_damage_p = False
                 elif counter == 0 and getting_damage_e == True:
-                    e_damage, e_text, e_buff, e_debuff = damage(Enemy(), enemy_move_choice, Player(), enemy.color)
+                    e_damage, e_text, e_buff, e_debuff = get_damage(Enemy(), enemy_move_choice, Player(), enemy.color)
                     getting_damage_e = False
                
 
-                text1 = f'{player.color} used {player_move_choice}!' if counter > 0 else f'{enemy.color} used {enemy_move_choice}!'
+                text1 = f'{player.color} used {moves_equipped[player_move_choice]['Name']}!' if counter > 0 else f'{enemy.color} used {enemy_move_choice}!'
                 text2 = p_text if counter > 0 else e_text
                 get_text(30, text1, 'black', (500, 450))
                 get_text(30, text2, 'black', (500, 500))
@@ -700,6 +721,7 @@ while running:
                     enemy_move_choice = False
                     bar_change_e, bar_change_p = 0, 0
                     getting_damage_p, getting_damage_e = True, True 
+                    player.level += 1
                     counter = 2
 
                     
@@ -721,8 +743,9 @@ while running:
     mouseX = mousePos[0]
     mouseY = mousePos[1]
     #get_text(20, f'{mouseX}, {mouseY}', 'grey', (mouseX, mouseY))
-    get_text(20, f'{str(player.defense)}, {str(enemy.defense)}', 'white', (40, 10))
-    get_text(20, f'{str(player.health)}, {str(enemy.health)}', 'white', (40, 30))
+    #get_text(20, f'{str(player.defense)}, {str(enemy.defense)}', 'white', (40, 10))
+    #get_text(20, f'{str(player.health)}, {str(enemy.health)}', 'white', (40, 30))
+    get_text(20, f'{player.level}, {player.defense}, {player.health}', 'white', (50, 10))
 
     #get_text(20, f'{enemy.health}, {p_damage}, {enemy.health_bar}, {e_bar_x}, {bar_change}',  player.color,(70, 10))
     # get_text(20, f'{player.loc[0]}, {player.loc[1]}', 'white', (50, 50))
