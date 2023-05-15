@@ -113,7 +113,7 @@ move_list = {
         'Name': 'Ridicule'
     }}
 
-moves_equipped = {
+moves = {
     'move 1' : move_list['Poly Tackle'],
     'move 2' : move_list['Square Fury'],
     'move 3' : move_list['Polyscare'],
@@ -132,7 +132,7 @@ class Entity:
         self.defense = 40 + ((self.level - 2) * 1.5)
         # self.buff = 1
         # self.debuff = 1
-        self.moves_equipped = moves_equipped
+        self.moves = moves
 
 class Player(Entity):
     def __init__(self):
@@ -154,9 +154,9 @@ enemy = Enemy()
 
 def get_damage(attacker, move, opponent, color):
     if move == 'move 1':
-        a_damage =    math.floor(((((2*attacker.level)/5 + 2)*attacker.moves_equipped[move]['Power']*(opponent.health/opponent.defense))/50+2))
+        a_damage =    math.floor(((((2*attacker.level)/5 + 2)*attacker.moves[move]['Power']*(opponent.health/opponent.defense))/50+2))
         
-        #attacker.moves_equipped[move]['a_damage']
+        #attacker.moves[move]['a_damage']
         # if attacker.a_buff != 1:
         #     a_damage *= player.a_buff
         a_debuff = 0
@@ -166,10 +166,10 @@ def get_damage(attacker, move, opponent, color):
 
 
     elif move == 'move 2':
-        if random.randint(1,100) <= attacker.moves_equipped[move]['Chance']:
-            a_damage = math.floor(((((2*attacker.level)/5 + 2)*(attacker.moves_equipped[move]['Power']*2)*(opponent.health/opponent.defense))/50+2))
+        if random.randint(1,100) <= attacker.moves[move]['Chance']:
+            a_damage = math.floor(((((2*attacker.level)/5 + 2)*(attacker.moves[move]['Power']*2)*(opponent.health/opponent.defense))/50+2))
         else:
-            a_damage = math.floor(((((2*attacker.level)/5 + 2)*attacker.moves_equipped[move]['Power']*(opponent.health/opponent.defense))/50+2))
+            a_damage = math.floor(((((2*attacker.level)/5 + 2)*attacker.moves[move]['Power']*(opponent.health/opponent.defense))/50+2))
         a_buff = 0
         a_debuff = 0
         move_text = f'{color} dealt {a_damage} damage!' 
@@ -581,7 +581,7 @@ while running:
             pg.draw.circle(screen, player_move1, (130,150), 25)
             pg.draw.circle(screen, player_move1, (230,150), 25)
             pg.draw.rect(screen, player_move1, (130, 125, 100,50))
-            get_text(20, player.moves_equipped['move 1']['Name'], 'black', (180, 150))
+            get_text(20, player.moves['move 1']['Name'], 'black', (180, 150))
             if mouseX >= 105 and mouseX <= 255 and mouseY >= 125 and mouseY <= 175 and player_move_choice == False:
                 player_move1 = 'gold'
             elif player_move_choice == False:
@@ -591,7 +591,7 @@ while running:
             pg.draw.circle(screen, player_move2, (130,210), 25)
             pg.draw.circle(screen, player_move2, (230,210), 25)
             pg.draw.rect(screen, player_move2, (130, 185, 100,50))
-            get_text(20, player.moves_equipped['move 2']['Name'], 'black', (180, 210))
+            get_text(20, player.moves['move 2']['Name'], 'black', (180, 210))
             if mouseX >= 105 and mouseX <= 255 and mouseY >= 185 and mouseY <= 235 and player_move_choice == False:
                 player_move2 = 'gold'
             elif player_move_choice == False:
@@ -600,7 +600,7 @@ while running:
             pg.draw.circle(screen, player_move3, (130,270), 25)
             pg.draw.circle(screen, player_move3, (230,270), 25)
             pg.draw.rect(screen, player_move3, (130, 245, 100,50))
-            get_text(20, player.moves_equipped['move 3']['Name'], 'black', (180, 270))
+            get_text(20, player.moves['move 3']['Name'], 'black', (180, 270))
             if mouseX >= 105 and mouseX <= 255 and mouseY >= 245 and mouseY <= 295 and player_move_choice == False:
                 player_move3 = 'gold'
             elif player_move_choice == False:
@@ -609,7 +609,7 @@ while running:
             pg.draw.circle(screen, player_move4, (130,330), 25)
             pg.draw.circle(screen, player_move4, (230,330), 25)
             pg.draw.rect(screen, player_move4, (130, 305, 100,50))
-            get_text(20, player.moves_equipped['move 4']['Name'], 'black', (180, 330))
+            get_text(20, player.moves['move 4']['Name'], 'black', (180, 330))
             if mouseX >= 105 and mouseX <= 255 and mouseY >= 305 and mouseY <= 355 and player_move_choice == False:
                 player_move4 = 'gold'
             elif player_move_choice == False:
@@ -648,22 +648,22 @@ while running:
             pg.draw.circle(screen, enemy_move1, (870,150), 25)
             pg.draw.circle(screen, enemy_move1, (770,150), 25)
             pg.draw.rect(screen, enemy_move1, (770, 125, 100,50))
-            get_text(20, enemy.moves_equipped['move 1']['Name'], 'black', (820, 150))
+            get_text(20, enemy.moves['move 1']['Name'], 'black', (820, 150))
             
             pg.draw.circle(screen, enemy_move2, (870,210), 25)
             pg.draw.circle(screen, enemy_move2, (770,210), 25)
             pg.draw.rect(screen, enemy_move2, (770, 185, 100,50))
-            get_text(20, enemy.moves_equipped['move 2']['Name'], 'black', (820, 210))
+            get_text(20, enemy.moves['move 2']['Name'], 'black', (820, 210))
 
             pg.draw.circle(screen, enemy_move3, (870,270), 25)
             pg.draw.circle(screen, enemy_move3, (770,270), 25)
             pg.draw.rect(screen, enemy_move3, (770, 245, 100,50))
-            get_text(20, enemy.moves_equipped['move 3']['Name'], 'black', (820, 270))
+            get_text(20, enemy.moves['move 3']['Name'], 'black', (820, 270))
 
             pg.draw.circle(screen, enemy_move4, (870,330), 25)
             pg.draw.circle(screen, enemy_move4, (770,330), 25)
             pg.draw.rect(screen, enemy_move4, (770, 305, 100,50))
-            get_text(20, enemy.moves_equipped['move 4']['Name'], 'black', (820, 330))
+            get_text(20, enemy.moves['move 4']['Name'], 'black', (820, 330))
 
             if enemy_move_choice == move_options[0]:
                 enemy_move1 = enemy.color
@@ -686,7 +686,7 @@ while running:
                     getting_damage_e = False
                
                 
-                text1 = f"{player.color} used { moves_equipped[player_move_choice]['Name'] }!" if counter > 0 else f'{enemy.color} used {enemy_move_choice}!'
+                text1 = f"{player.color} used { moves[player_move_choice]['Name'] }!" if counter > 0 else f'{enemy.color} used {enemy_move_choice}!'
                 text2 = p_text if counter > 0 else e_text
                 get_text(30, text1, 'black', (500, 450))
                 get_text(30, text2, 'black', (500, 500))
@@ -710,7 +710,7 @@ while running:
 
 
                     p_damage, e_damage = 0, 0
-                    print(moves_equipped[player_move_choice]['Name'])
+                    print(moves[player_move_choice]['Name'])
 
                     player_move_choice = False
                     enemy_move_choice = False
