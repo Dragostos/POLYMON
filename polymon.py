@@ -61,7 +61,7 @@ running = True
 start_menu = True
 roaming = False
 battle = False
-battle_finish = False
+battle_results = False
 
 
 encounter_part1 = True
@@ -97,9 +97,9 @@ class Entity:
         self.level = 1
         self.health = 68 + ((self.level - 1) *2)
         self.health_bar = 298
-        self.defense = 40 + ((self.level - 2) * 1.5)
-        # self.buff = 1
-        # self.debuff = 1
+        self.defense = 40 + math.floor(  ((self.level - 2) * 1.5)  )
+        self.buff = 1
+        self.debuff = 1
         self.moves = moves_to_use.moves
 
 class Player(Entity):
@@ -131,7 +131,7 @@ def get_damage(attacker, move, opponent, color):
     attacker_debuff = 0
     
     if attacker.moves[move]['Name'] == 'Poly Tackle':
-        attacker_damage =    math.floor(((((2*attacker.level)/5 + 2)*attacker.moves[move]['Power']*(opponent.health/opponent.defense))/50+2))
+        attacker_damage = math.floor(((((2*attacker.level)/5 + 2)*attacker.moves[move]['Power']*(opponent.health/(opponent.defense-opponent.debuff)))/50+2))
         attacker_debuff = 0
         attacker_buff = 0
         move_text = f'{color} dealt {attacker_damage} damage!'
@@ -140,18 +140,21 @@ def get_damage(attacker, move, opponent, color):
 
     elif attacker.moves[move]['Name'] == 'Square Fury':
         if random.randint(1,100) <= attacker.moves[move]['Chance']:
-            attacker_damage = math.floor(((((2*attacker.level)/5 + 2)*(attacker.moves[move]['Power']*2)*(opponent.health/opponent.defense))/50+2))
+            attacker_damage = math.floor(((((2*attacker.level)/5 + 2)*(attacker.moves[move]['Power']*2)*opponent.health/(opponent.defense-opponent.debuff))/50+2))
         else:
-            attacker_damage = math.floor(((((2*attacker.level)/5 + 2)*attacker.moves[move]['Power']*(opponent.health/opponent.defense))/50+2))
+            attacker_damage = math.floor(((((2*attacker.level)/5 + 2)*attacker.moves[move]['Power']*opponent.health/(opponent.defense-opponent.debuff))/50+2))
         attacker_buff = 0
         attacker_debuff = 0
         move_text = f'{color} dealt {attacker_damage} damage!' 
 
 
-
+    elif attacker.moves[move]['Name'] == 'Polyscare':
+        attacker_damage = 0
+        attacker_debuff = math.floor(  opponent.defense * .15  )
+        move_text = f"{color}'s defense lowered!"
 
     elif move == 'move 3':
-        attacker_damage = 0
+        
         attacker_buff = 0
         attacker_debuff = opponent.defense * .05
         move_text = f"{color}'s defense lowered!"
@@ -357,6 +360,19 @@ def t_map(direction):
         block_x = 225
     return map, boolz
 
+def mini_map():
+    block_x = 850
+    block_y = 25
+    for y in range(4):
+        for x in range(4):
+            if map_loc[1] == y and map_loc[0] == x:
+                color = player.color
+            else:
+                color = 'green'
+            pg.draw.rect(screen, color, (block_x, block_y, 15, 15))
+            block_x += 20
+        block_y += 20
+        block_x = 850
 
 map_order = [
     ["corner('down right')", 'hori_line()', "t_map('down')", "corner('down left')"],
@@ -376,6 +392,20 @@ def encounter():
     global roaming, battle
     roaming = False
     battle = True
+
+def reset_stats():
+    global e_bar_x
+
+    player.health = 68 + ((player.level - 1) *2)
+    player.health_bar = 298
+    player.defense = 40 + ((player.level - 2) * 1.5)
+
+    enemy.health = 68 + ((enemy.level - 1) *2)
+    enemy.health_bar = 298
+    enemy.defense = 40 + ((enemy.level - 2) * 1.5)
+    e_bar_x = 536
+    
+
 
 
 
@@ -415,7 +445,7 @@ while running:
 
         if event.type == timer_event and on_green == True:  # encounter
             time_passed += 1
-            if time_passed % 1 == 0:
+            if time_passed % 10 == 0:
                 encounter()
         
         if event.type == timer_event and enemy_move_choice != False and player_move_choice != False:
@@ -454,12 +484,13 @@ while running:
     Roaming
     '''
     if roaming == True:
-         
         current_map, bools = eval(map_order[map_loc[1]][map_loc[0]])    
-        
+        mini_map()
         if on_white == True:
             checked_edge = check_switch()
         
+        if map_loc == [0,3]:
+            get_text(25, 'Use WASD keys to move your character', 'white', (500, 10))
         
         if current_map == 'start_map':
             if (player.loc[0] == 7 or player.loc[0] == 8) and player.loc[1] <= 8:
@@ -602,7 +633,7 @@ while running:
                     player_move4 = player.color
                     player_move_choice = 'move 4'
                 if enemy_move_choice == False:
-                    enemy_move_choice = 'move 2'
+                    enemy_move_choice = 'move 1'
                     #enemy_move_choice = 'Polyscare'
                     #enemy_move_choice = random.choice(move_options)
                 
@@ -652,10 +683,10 @@ while running:
             if enemy_move_choice != False and player_move_choice != False:
                 
                 if counter == 2 and getting_damage_p == True:
-                    p_damage, p_text, p_buff, p_debuff = get_damage( Player(), player_move_choice, Enemy(), player.color )
+                    p_damage, p_text, p_buff, p_debuff = get_damage(player, player_move_choice, enemy, player.color )
                     getting_damage_p = False
                 elif counter == 0 and getting_damage_e == True:
-                    e_damage, e_text, e_buff, e_debuff = get_damage(Enemy(), enemy_move_choice, Player(), enemy.color)
+                    e_damage, e_text, e_buff, e_debuff = get_damage(enemy, enemy_move_choice, player, enemy.color)
                     #print(e_text)
                     getting_damage_e = False
                     
@@ -670,8 +701,9 @@ while running:
                 
                 if counter == -2:
                     if player_move_choice != False and enemy_move_choice != False:
-                        player.health -= e_damage #removing health from the entitties health stat
-                        enemy.health -= p_damage  #^^
+                        player.health -= e_damage 
+                        enemy.health -= p_damage  
+                        enemy.debuff = e_debuff
                         
                         bar_change_e = math.floor( ( enemy.health_bar * (enemy.health/(enemy.health+p_damage)) ) )
                         #print(math.floor( ( player.health_bar * (player.health/(player.health+e_damage)) ) ))
@@ -694,11 +726,33 @@ while running:
                     #player.level += 1
                     
                     counter = 2
+                
+                if player.health <= 0 or enemy.health <= 0:
+                    battle_results = True
+                    battle = False
+                    encounter_part1 = True
+                    encounter_part2 = False
+                    encounter_part3 = False
+
 
                     
+    '''
+    Battle Results
+    '''
 
+    if battle_results:
+        
+        if player.health > 0 and enemy.health <= 0:
+            player.level += 1
+            enemy.level += 1
 
+        reset_stats()
 
+        # print(f"Player Stats\nLevel {player.level}\nHealth {player.health}\nDefense {player.defense}\n")
+        # print(f"Enemy Stats\nLevel {enemy.level}\nHealth {enemy.health}\nDefense {enemy.defense}")
+        # print(f"\nTheoretical damage of poly tackle (player) {math.floor(((((2*player.level)/5 + 2)*player.moves['move 2']['Power']*(enemy.health/enemy.defense))/50+2))}")
+        battle_results = False
+        roaming = True
 
 
     '''
