@@ -19,6 +19,7 @@ import pygame as pg
 import sys
 import random
 import math
+import moves_to_use
 
 
 pg.init()
@@ -99,7 +100,7 @@ class Entity:
         self.defense = 40 + ((self.level - 2) * 1.5)
         # self.buff = 1
         # self.debuff = 1
-        self.moves = moves
+        self.moves = moves_to_use.moves
 
 class Player(Entity):
     def __init__(self):
@@ -119,46 +120,51 @@ class Enemy(Entity):
 player = Player()
 enemy = Enemy()
 
+
+
+
+
 def get_damage(attacker, move, opponent, color):
-    if move == 'move 1':
-        a_damage =    math.floor(((((2*attacker.level)/5 + 2)*attacker.moves[move]['Power']*(opponent.health/opponent.defense))/50+2))
-        
-        #attacker.moves[move]['a_damage']
-        # if attacker.a_buff != 1:
-        #     a_damage *= player.a_buff
-        a_debuff = 0
-        a_buff = 0
-        move_text = f'{color} dealt {a_damage} damage!'
+    attacker_damage = 0
+    move_text = 'no workie'
+    attacker_buff = 0
+    attacker_debuff = 0
+    
+    if attacker.moves[move]['Name'] == 'Poly Tackle':
+        attacker_damage =    math.floor(((((2*attacker.level)/5 + 2)*attacker.moves[move]['Power']*(opponent.health/opponent.defense))/50+2))
+        attacker_debuff = 0
+        attacker_buff = 0
+        move_text = f'{color} dealt {attacker_damage} damage!'
 
 
 
-    elif move == 'move 2':
+    elif attacker.moves[move]['Name'] == 'Square Fury':
         if random.randint(1,100) <= attacker.moves[move]['Chance']:
-            a_damage = math.floor(((((2*attacker.level)/5 + 2)*(attacker.moves[move]['Power']*2)*(opponent.health/opponent.defense))/50+2))
+            attacker_damage = math.floor(((((2*attacker.level)/5 + 2)*(attacker.moves[move]['Power']*2)*(opponent.health/opponent.defense))/50+2))
         else:
-            a_damage = math.floor(((((2*attacker.level)/5 + 2)*attacker.moves[move]['Power']*(opponent.health/opponent.defense))/50+2))
-        a_buff = 0
-        a_debuff = 0
-        move_text = f'{color} dealt {a_damage} damage!' 
+            attacker_damage = math.floor(((((2*attacker.level)/5 + 2)*attacker.moves[move]['Power']*(opponent.health/opponent.defense))/50+2))
+        attacker_buff = 0
+        attacker_debuff = 0
+        move_text = f'{color} dealt {attacker_damage} damage!' 
 
 
 
 
     elif move == 'move 3':
-        a_damage = 0
-        a_buff = 0
-        a_debuff = opponent.defense * .05
+        attacker_damage = 0
+        attacker_buff = 0
+        attacker_debuff = opponent.defense * .05
         move_text = f"{color}'s defense lowered!"
 
 
 
     elif move == 'move 3':
-        a_damage = 0
-        a_debuff = opponent.defense * .10
-        a_buff = opponent.multi + (opponent.multi * 0.5)
+        attacker_damage = 0
+        attacker_debuff = opponent.defense * .10
+        attacker_buff = opponent.multi + (opponent.multi * 0.5)
         move_text = f"{color}'s defense lowered and atttack increased!'"
     
-    return a_damage, move_text, a_buff, a_debuff
+    return attacker_damage, move_text, attacker_buff, attacker_debuff
 
 
 def get_text(font_size, text, color, text_center):
@@ -596,7 +602,7 @@ while running:
                     player_move4 = player.color
                     player_move_choice = 'move 4'
                 if enemy_move_choice == False:
-                    enemy_move_choice = 'Square Fury'
+                    enemy_move_choice = 'move 2'
                     #enemy_move_choice = 'Polyscare'
                     #enemy_move_choice = random.choice(move_options)
                 
@@ -632,13 +638,13 @@ while running:
             pg.draw.rect(screen, enemy_move4, (770, 305, 100,50))
             get_text(20, enemy.moves['move 4']['Name'], 'black', (820, 330))
 
-            if enemy_move_choice == move_options[0]:
+            if enemy_move_choice == enemy.moves['move 1']:
                 enemy_move1 = enemy.color
-            elif enemy_move_choice == move_options[1]:
+            elif enemy_move_choice == enemy.moves['move 2']:
                 enemy_move2 = enemy.color
-            elif enemy_move_choice == move_options[2]:
+            elif enemy_move_choice == enemy.moves['move 3']:
                 enemy_move3 = enemy.color
-            elif enemy_move_choice == move_options[3]:
+            elif enemy_move_choice == enemy.moves['move 4']:
                 enemy_move4 = enemy.color
             if enemy_move_choice == False:
                 enemy_move1, enemy_move2, enemy_move3, enemy_move4 = 'green','green','green','green'
@@ -650,10 +656,12 @@ while running:
                     getting_damage_p = False
                 elif counter == 0 and getting_damage_e == True:
                     e_damage, e_text, e_buff, e_debuff = get_damage(Enemy(), enemy_move_choice, Player(), enemy.color)
+                    #print(e_text)
                     getting_damage_e = False
+                    
                
                 
-                text1 = f"{player.color} used { moves[player_move_choice]['Name'] }!" if counter > 0 else f'{enemy.color} used {enemy_move_choice}!'
+                text1 = f"{player.color} used { player.moves[player_move_choice]['Name'] }!" if counter > 0 else f"{enemy.color} used { enemy.moves[enemy_move_choice]['Name'] }!"
                 text2 = p_text if counter > 0 else e_text
                 get_text(30, text1, 'black', (500, 450))
                 get_text(30, text2, 'black', (500, 500))
@@ -677,13 +685,13 @@ while running:
 
 
                     p_damage, e_damage = 0, 0
-                    print(moves[player_move_choice]['Name'])
+                    #print(moves[player_move_choice]['Name'])
 
                     player_move_choice = False
                     enemy_move_choice = False
                     bar_change_e, bar_change_p = 0, 0
                     getting_damage_p, getting_damage_e = True, True 
-                    player.level += 1
+                    #player.level += 1
                     
                     counter = 2
 

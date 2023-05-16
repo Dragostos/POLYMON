@@ -30,6 +30,7 @@ end_menu = False
 class Entity:
     def __init__(self):
         self.color = 'black'
+
 class Player(Entity):
     def __init__(self):
         super().__init__()    #player init
