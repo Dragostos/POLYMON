@@ -12,17 +12,24 @@ move_list = {
         'Power': 35,
         'Accuracy': 90,
         'Name': 'Square Fury',
+        'Type': 'Physical'
 
     },
     'Polyscare': {
         'Debuff': 1.1,
-        'Name': 'Polyscare'
+        'Name': 'Polyscare',
+        'Type': 'Status'
     },
     'Ridicule': {
         'Attack Buff Increase': 1.1,
         'Defense Debuff Decrease': 1.1,
-        'Name': 'Ridicule'
-    }}
+        'Name': 'Ridicule',
+        'Type': 'Status'
+    },
+    
+    
+    }
+
 
 moves = {
     'move 1' : move_list['Poly Tackle'],

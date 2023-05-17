@@ -120,8 +120,19 @@ class Enemy(Entity):
 player = Player()
 enemy = Enemy()
 
+def random_mult():
+    returned = 1
+    if random.randint(217,255) / 255
 
-
+def get_damage(user, target, move, move_type):
+    user_damage = 0
+    
+    if move_type == 'Physical':
+        user_damage = (  (  (((2*user.level*2)/5)+2) * user.moves[move]['Power'] * ( user.attack / target.defense ) / 50  ) +2 ) * random_multi()
+        #   math.floor(((((2*user.level)/5 + 2)*user.moves[move]['Power']*(opponent.health/(opponent.defense-opponent.debuff)))/50+2))
+    
+    if move_type = 'Status':
+        e = 0
 
 
 def get_damage(attacker, move, opponent, color):
@@ -151,7 +162,7 @@ def get_damage(attacker, move, opponent, color):
     elif attacker.moves[move]['Name'] == 'Polyscare':
         attacker_damage = 0
         attacker_debuff = math.floor(  opponent.defense * .15  )
-        move_text = f"{color}'s defense lowered!"
+        move_text = f"{opponent.color}'s defense lowered!"
 
     elif move == 'move 3':
         
