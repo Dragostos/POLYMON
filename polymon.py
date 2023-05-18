@@ -98,6 +98,7 @@ class Entity:
         self.health = 68 + ((self.level - 1) *2)
         self.health_bar = 298
         self.defense = 40 + math.floor(  ((self.level - 2) * 1.5)  )
+        self.attack = 45 + math.floor(  ((self.level - 2) * 1.5)   )
         self.buff = 1
         self.debuff = 1
         self.moves = moves_to_use.moves
@@ -122,63 +123,65 @@ enemy = Enemy()
 
 def random_mult():
     returned = 1
-    if random.randint(217,255) / 255
+    if random.randint(217,255) / 255 >= 1:
+        returned = 2
 
-def get_damage(user, target, move, move_type):
+    return returned
+
+# def get_damage1(user, target, move, move_type):
+#     user_damage = 0
+    
+#     if move_type == 'Physical':
+#         if 'Chance' in user.moves[move]:
+#             user_damage = (  (  (((2*user.level*2)/5)+2) * (user.moves[move]['Power']*2) * ( user.attack / target.defense ) / 50  ) +2 ) * random_multi()
+        
+#         user_damage = (  (  (((2*user.level*2)/5)+2) * user.moves[move]['Power'] * ( user.attack / target.defense ) / 50  ) +2 ) * random_multi()
+#         #   math.floor(((((2*user.level)/5 + 2)*user.moves[move]['Power']*(target.health/(target.defense-target.debuff)))/50+2))
+    
+#     if move_type = 'Status':
+#         e = 0
+
+
+def get_damage(user, target, move):
     user_damage = 0
-    
-    if move_type == 'Physical':
-        user_damage = (  (  (((2*user.level*2)/5)+2) * user.moves[move]['Power'] * ( user.attack / target.defense ) / 50  ) +2 ) * random_multi()
-        #   math.floor(((((2*user.level)/5 + 2)*user.moves[move]['Power']*(opponent.health/(opponent.defense-opponent.debuff)))/50+2))
-    
-    if move_type = 'Status':
-        e = 0
-
-
-def get_damage(attacker, move, opponent, color):
-    attacker_damage = 0
     move_text = 'no workie'
-    attacker_buff = 0
-    attacker_debuff = 0
+    user_buff = 0
+    user_debuff = 0
     
-    if attacker.moves[move]['Name'] == 'Poly Tackle':
-        attacker_damage = math.floor(((((2*attacker.level)/5 + 2)*attacker.moves[move]['Power']*(opponent.health/(opponent.defense-opponent.debuff)))/50+2))
-        attacker_debuff = 0
-        attacker_buff = 0
-        move_text = f'{color} dealt {attacker_damage} damage!'
+    if user.moves[move]['Name'] == 'Poly Tackle':
+        user_damage = math.floor((  (  (((2*user.level*2)/5)+2) * user.moves[move]['Power'] * ( user.attack / target.defense ) / 50  ) +2 ) * random_mult() )
+        move_text = f'{user.color} dealt {user_damage} damage!'
 
 
 
-    elif attacker.moves[move]['Name'] == 'Square Fury':
-        if random.randint(1,100) <= attacker.moves[move]['Chance']:
-            attacker_damage = math.floor(((((2*attacker.level)/5 + 2)*(attacker.moves[move]['Power']*2)*opponent.health/(opponent.defense-opponent.debuff))/50+2))
+    elif user.moves[move]['Name'] == 'Square Fury':
+        if random.randint(1,100) <= user.moves[move]['Chance']:
+            user_damage = math.floor((  (  (((2*user.level*2)/5)+2) * (user.moves[move]['Power']*2) * ( user.attack / target.defense ) / 50  ) +2 ) * random_mult() )
         else:
-            attacker_damage = math.floor(((((2*attacker.level)/5 + 2)*attacker.moves[move]['Power']*opponent.health/(opponent.defense-opponent.debuff))/50+2))
-        attacker_buff = 0
-        attacker_debuff = 0
-        move_text = f'{color} dealt {attacker_damage} damage!' 
+            user_damage = math.floor((  (  (((2*user.level*2)/5)+2) * user.moves[move]['Power'] * ( user.attack / target.defense ) / 50  ) +1 ) * random_mult() )
+        move_text = f'{user.color} dealt {user_damage} damage!' 
 
 
-    elif attacker.moves[move]['Name'] == 'Polyscare':
-        attacker_damage = 0
-        attacker_debuff = math.floor(  opponent.defense * .15  )
-        move_text = f"{opponent.color}'s defense lowered!"
+    elif user.moves[move]['Name'] == 'Polyscare':
+        user_damage = 0
+        user_debuff = math.floor(  target.defense * .15  )
+        move_text = f"{user.color}'s defense lowered!"
 
     elif move == 'move 3':
         
-        attacker_buff = 0
-        attacker_debuff = opponent.defense * .05
-        move_text = f"{color}'s defense lowered!"
+        user_buff = 0
+        user_debuff = target.defense * .05
+        move_text = f"{user.color}'s defense lowered!"
 
 
 
     elif move == 'move 3':
-        attacker_damage = 0
-        attacker_debuff = opponent.defense * .10
-        attacker_buff = opponent.multi + (opponent.multi * 0.5)
-        move_text = f"{color}'s defense lowered and atttack increased!'"
+        user_damage = 0
+        user_debuff = target.defense * .10
+        user_buff = target.multi + (target.multi * 0.5)
+        move_text = f"{user.color}'s defense lowered and atttack increased!'"
     
-    return attacker_damage, move_text, attacker_buff, attacker_debuff
+    return user_damage, move_text, user_buff, user_debuff
 
 
 def get_text(font_size, text, color, text_center):
@@ -456,7 +459,7 @@ while running:
 
         if event.type == timer_event and on_green == True:  # encounter
             time_passed += 1
-            if time_passed % 10 == 0:
+            if time_passed % 1 == 0:
                 encounter()
         
         if event.type == timer_event and enemy_move_choice != False and player_move_choice != False:
@@ -735,7 +738,7 @@ while running:
                     bar_change_e, bar_change_p = 0, 0
                     getting_damage_p, getting_damage_e = True, True 
                     #player.level += 1
-                    
+                    print(f"player \nhealth = {player.health}   \nattack = {player.attack}   \ndefense = {player.defense}")
                     counter = 2
                 
                 if player.health <= 0 or enemy.health <= 0:

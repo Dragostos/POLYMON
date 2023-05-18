@@ -1,6 +1,12 @@
 move_list = {
+    'test move' : {
+        'Power' : 999,
+        'Accuracy': 100,
+        'Name': 'Testing',
+        'Type': 'Physical'
+    },
+    
     'Poly Tackle' : {
-        'Damage': 2,
         'Power': 35,
         'Accuracy': 90,
         'Name': 'Poly Tackle',
@@ -8,7 +14,6 @@ move_list = {
     },
     'Square Fury': {
         'Chance': 10,
-        'Damage': 2,
         'Power': 35,
         'Accuracy': 90,
         'Name': 'Square Fury',
