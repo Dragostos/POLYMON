@@ -163,23 +163,7 @@ def get_damage(user, target, move):
 
 
     elif user.moves[move]['Name'] == 'Polyscare':
-        user_damage = 0
-        user_debuff = math.floor(  target.defense * .15  )
-        move_text = f"{user.color}'s defense lowered!"
-
-    elif move == 'move 3':
-        
-        user_buff = 0
-        user_debuff = target.defense * .05
-        move_text = f"{user.color}'s defense lowered!"
-
-
-
-    elif move == 'move 3':
-        user_damage = 0
-        user_debuff = target.defense * .10
-        user_buff = target.multi + (target.multi * 0.5)
-        move_text = f"{user.color}'s defense lowered and atttack increased!'"
+        print('poop')
     
     return user_damage, move_text, user_buff, user_debuff
 

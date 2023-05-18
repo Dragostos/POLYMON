@@ -1,9 +1,15 @@
 move_list = {
-    'test move' : {
+    'test physical' : {
         'Power' : 999,
         'Accuracy': 100,
-        'Name': 'Testing',
+        'Name': 'test physical',
         'Type': 'Physical'
+    },
+    'test status': {
+        'Power': 0,
+        'Accuracy': 100,
+        'Name': 'test status',
+        'Type': 'Status'
     },
     
     'Poly Tackle' : {
@@ -18,16 +24,16 @@ move_list = {
         'Accuracy': 90,
         'Name': 'Square Fury',
         'Type': 'Physical'
-
     },
     'Polyscare': {
-        'Debuff': 1.1,
+        'Power': 0,
+        'Accuracy': 100,
         'Name': 'Polyscare',
         'Type': 'Status'
     },
     'Ridicule': {
-        'Attack Buff Increase': 1.1,
-        'Defense Debuff Decrease': 1.1,
+        'Power': 0,
+        'Accuracy': 100,
         'Name': 'Ridicule',
         'Type': 'Status'
     },
