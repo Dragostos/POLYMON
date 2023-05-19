@@ -46,6 +46,8 @@ time_delay = 1000
 timer_event = pg.USEREVENT + 1
 pg.time.set_timer(timer_event, time_delay)
 time_passed = 0
+mini_map_time = 0
+mini_map_timer = True
 length_p = 1
 length_e = 1
 length_b = 1
@@ -95,24 +97,26 @@ class Entity:
     def __init__(self):
         self.color = 'black'
         self.level = 1
+        self.experience = 0
         self.health = 68 + ((self.level - 1) *2)
         self.health_bar = 298
         self.defense = 40 + math.floor(  ((self.level - 2) * 1.5)  )
         self.attack = 45 + math.floor(  ((self.level - 2) * 1.5)   )
         self.buff = 1
         self.debuff = 1
-        self.moves = moves_to_use.moves
 
 class Player(Entity):
     def __init__(self):
         super().__init__()
         self.loc = [0,15]
         self.name = 'Player'
+        self.moves = moves_to_use.moves_p
 
 class Enemy(Entity):
     def __init__(self):
         super().__init__()
         self.name = 'Enemy'
+        self.moves = moves_to_use.moves_e
 
 
 
@@ -128,19 +132,6 @@ def random_mult():
 
     return returned
 
-# def get_damage1(user, target, move, move_type):
-#     user_damage = 0
-    
-#     if move_type == 'Physical':
-#         if 'Chance' in user.moves[move]:
-#             user_damage = (  (  (((2*user.level*2)/5)+2) * (user.moves[move]['Power']*2) * ( user.attack / target.defense ) / 50  ) +2 ) * random_multi()
-        
-#         user_damage = (  (  (((2*user.level*2)/5)+2) * user.moves[move]['Power'] * ( user.attack / target.defense ) / 50  ) +2 ) * random_multi()
-#         #   math.floor(((((2*user.level)/5 + 2)*user.moves[move]['Power']*(target.health/(target.defense-target.debuff)))/50+2))
-    
-#     if move_type = 'Status':
-#         e = 0
-
 
 def get_damage(user, target, move):
     user_damage = 0
@@ -155,8 +146,8 @@ def get_damage(user, target, move):
 
 
     elif user.moves[move]['Name'] == 'Square Fury':
-        if random.randint(1,100) <= user.moves[move]['Chance']:
-            user_damage = math.floor((  (  (((2*user.level*2)/5)+2) * (user.moves[move]['Power']*2) * ( user.attack / target.defense ) / 50  ) +2 ) * random_mult() )
+        if random.randint(1,10) <= user.moves[move]['Chance']:
+            user_damage = math.floor((  (  (((2*user.level*2)/5)+2) * (user.moves[move]['Power']*2) * ( user.attack / target.defense ) / 50  ) +3 ) * random_mult() )
         else:
             user_damage = math.floor((  (  (((2*user.level*2)/5)+2) * user.moves[move]['Power'] * ( user.attack / target.defense ) / 50  ) +1 ) * random_mult() )
         move_text = f'{user.color} dealt {user_damage} damage!' 
@@ -363,7 +354,7 @@ def mini_map():
     block_y = 25
     for y in range(4):
         for x in range(4):
-            if map_loc[1] == y and map_loc[0] == x:
+            if map_loc[1] == y and map_loc[0] == x and time_passed % 2 == 0:
                 color = player.color
             else:
                 color = 'green'
@@ -443,11 +434,14 @@ while running:
 
         if event.type == timer_event and on_green == True:  # encounter
             time_passed += 1
-            if time_passed % 1 == 0:
+            if time_passed % 10 == 0:
                 encounter()
         
         if event.type == timer_event and enemy_move_choice != False and player_move_choice != False:
             counter -= 1
+        
+        if event.type == timer_event and mini_map_timer and (on_green or on_white):
+            mini_map_time += 1
             
       
     screen.fill('black')
@@ -484,11 +478,10 @@ while running:
     if roaming == True:
         current_map, bools = eval(map_order[map_loc[1]][map_loc[0]])    
         mini_map()
-        if on_white == True:
+        if on_white:
             checked_edge = check_switch()
         
-        if map_loc == [0,3]:
-            get_text(25, 'Use WASD keys to move your character', 'white', (500, 10))
+        get_text(25, 'Use WASD keys to move your character', 'white', (500, 10))
         
         if current_map == 'start_map':
             if (player.loc[0] == 7 or player.loc[0] == 8) and player.loc[1] <= 8:
@@ -631,8 +624,7 @@ while running:
                     player_move4 = player.color
                     player_move_choice = 'move 4'
                 if enemy_move_choice == False:
-                    enemy_move_choice = 'move 1'
-                    #enemy_move_choice = 'Polyscare'
+                    enemy_move_choice = 'move 4'
                     #enemy_move_choice = random.choice(move_options)
                 
             
@@ -681,11 +673,11 @@ while running:
             if enemy_move_choice != False and player_move_choice != False:
                 
                 if counter == 2 and getting_damage_p == True:
-                    p_damage, p_text, p_buff, p_debuff = get_damage(player, player_move_choice, enemy, player.color )
+                    p_damage, p_text, p_buff, p_debuff = get_damage(player, enemy, player_move_choice)
                     getting_damage_p = False
                 elif counter == 0 and getting_damage_e == True:
-                    e_damage, e_text, e_buff, e_debuff = get_damage(enemy, enemy_move_choice, player, enemy.color)
-                    #print(e_text)
+                    e_damage, e_text, e_buff, e_debuff = get_damage(enemy, player, enemy_move_choice)
+                    print(e_text)
                     getting_damage_e = False
                     
                

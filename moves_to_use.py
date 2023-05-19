@@ -42,11 +42,18 @@ move_list = {
     }
 
 
-moves = {
+moves_p = {
     'move 1' : move_list['Poly Tackle'],
     'move 2' : move_list['Square Fury'],
     'move 3' : move_list['Polyscare'],
     'move 4' : move_list['Ridicule']
 }
+moves_e = {
+    'move 1' : move_list['Polyscare'],
+    'move 2' : move_list['Ridicule'],
+    'move 3' : move_list['Square Fury'],
+    'move 4' : move_list['Poly Tackle']
+}
 
-move_options = ['Poly Tackle', 'Square Fury', 'Polyscare', 'Ridicule']
+
+move_options = ['move 1', 'move 2', 'move 3', 'move 4']
