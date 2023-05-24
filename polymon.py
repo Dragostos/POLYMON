@@ -19,7 +19,10 @@ import pygame as pg
 import sys
 import random
 import math
+
 import moves_to_use
+import maps
+import stats
 
 
 pg.init()
@@ -37,7 +40,7 @@ edges = [1,1]
 current_map = False
 on_white = False
 on_green = False
-map_loc = [0,3]
+map_loc = maps.map_loc
 checked_switch = 0
 checked_edge = False
 
@@ -125,6 +128,7 @@ class Enemy(Entity):
 player = Player()
 enemy = Enemy()
 
+
 def random_mult():
     returned = 1
     if random.randint(217,255) / 255 >= 1:
@@ -166,188 +170,6 @@ def get_text(font_size, text, color, text_center):
     textRect.center = (text_center)
     screen.blit(text, textRect)
 
-def start_map():
-    map = 'start_map'
-    block_x = 225
-    block_y = 25
-    boolz = [
-            'x == 7 or x == 8',
-            'y <= 8',
-            'player.loc[0] == 7 or player.loc[0] == 8',
-            'player.loc[1] >= 7'
-            ]
-    for y in range(16):
-            for x in range(16):
-                    if (x == 7 or x == 8) and y <= 8:
-                            color = 'white'
-                    else:
-                            color = 'green'
-                            
-                    pg.draw.rect(screen, color, (block_x, block_y, 25, 25))
-                    block_x += 35
-            block_y += 35
-            block_x = 225
-    
-    return map, boolz
-
-def vert_line():
-    map = 'vert_line'
-    block_x = 225
-    block_y = 25
-    boolz = ['x == 7 or x == 8',
-            'player.loc[0] == 7 or player.loc[0] == 8'    
-    ]
-    for y in range(16):
-            for x in range(16):
-                    if x == 7 or x == 8:
-                            color = 'white'
-                    else:
-                            color = 'green'
-                            
-                    pg.draw.rect(screen, color, (block_x, block_y, 25, 25))
-                    block_x += 35
-            block_y += 35
-            block_x = 225
-    return map, boolz
-
-def hori_line():
-    map = 'hori_line'
-    block_x = 225
-    block_y = 25
-    boolz = [
-        'y == 7 or y == 8',
-        'player.loc[1] == 7 or player.loc[1] == 8'
-    ]
-    for y in range(16):
-        for x in range(16):
-            if y == 7 or y == 8:
-                color = 'white'
-            else:
-                color = 'green'
-            pg.draw.rect(screen, color, (block_x, block_y, 25, 25))
-            block_x += 35
-        block_y += 35
-        block_x = 225
-    return map, boolz
-
-def cross():
-    map = 'cross'
-    block_x = 225
-    block_y = 25
-    boolz = [
-        'x == 7 or x == 8',
-        'y == 7 or y == 8',
-        'player.loc[0] == 7 or player.loc[0] == 8',
-        'player.loc[1] == 7 or player.loc[1] == 8'
-    ]
-    for y in range(16):
-        for x in range(16):
-            if (x == 7 or x == 8) or (y == 7 or y == 8):
-                color = 'white'
-            else:
-                color = 'green'
-            pg.draw.rect(screen, color, (block_x, block_y, 25, 25))
-            block_x += 35
-        block_y += 35
-        block_x = 225
-    return map, boolz
-
-def corner(direction):
-    map = 'corner'
-    defined = []# if (most x) and ( y == top or y == bottom) or (x == left or x == right) and (up or down)
-    if direction == 'down right': 
-        boolz = [
-            'x >= 7',
-            'y > 8',
-            'player.loc[0] >= 7',
-            'player.loc[1] > 8'
-            ]
-    elif direction == 'down left':
-        boolz = [
-            'x <= 8',
-            'y > 8',
-            'player.loc[0] <= 8',
-            'player.loc[1] > 8'
-            ]
-    elif direction == 'up right':
-        boolz = [
-            'x >= 7', 
-            'y < 8',
-            'player.loc[0] >= 7',
-            'player.loc[1] < 8'
-            ]
-    elif direction == 'up left':
-        boolz = [
-            'x <= 8',
-            'y < 8',
-            'player.loc[0] <= 8',
-            'player.loc[1] < 8'
-            ]
-    block_x = 225
-    block_y = 25
-    for y in range(16):
-        for x in range(16):
-            if eval(boolz[0]) and (y==7 or y==8) or ((x == 7 or x==8) and eval(boolz[1])):
-                color = 'white'
-            else:
-                color = 'green'
-            pg.draw.rect(screen, color, (block_x, block_y, 25, 25))
-            block_x += 35
-        block_y += 35
-        block_x = 225
-    return map, boolz
-
-def t_map(direction):
-    map = 't_map'
-    if direction == 'down':
-        boolz = [
-            'x == 7 or x == 8',
-            'y >= 7',
-            'y == 7 or y == 8',
-            'player.loc[0] == 7 or player.loc[0] == 8',
-            'player.loc[1] >= 7',
-            'player.loc[1] == 7 or player.loc[1] == 8'
-        ]
-    elif direction == 'right':
-        boolz = [
-            'y == 7 or y == 8',
-            'x >= 7',
-            'x == 7 or x == 8',
-            'player.loc[1] == 7 or player.loc[1] == 8',
-            'player.loc[0] >= 7',
-            'player.loc[0] == 7 or player.loc[0] == 8'
-        ]
-    elif direction == 'up':
-        boolz = [
-            'x == 7 or x == 8',
-            'y <= 7',
-            'y == 7 or y == 8',
-            'player.loc[0] == 7 or player.loc[0] == 8',
-            'player.loc[1] <= 7',
-            'player.loc[1] == 7 or player.loc[1] == 8'
-        ]
-    elif direction == 'left':
-        boolz = [
-            'y == 7 or y == 8',
-            'x <= 8',
-            'x == 7 or x == 8',
-            'player.loc[1] == 7 or player.loc[1] == 8',
-            'player.loc[0] <= 8',
-            'player.loc[0] == 7 or player.loc[0] == 8'
-        ]
-    block_x = 225
-    block_y = 25
-    for y in range(16):
-        for x in range(16):
-            if (eval(boolz[0])) and eval(boolz[1]) or (eval(boolz[2])):
-                color = 'white'
-            else:
-                color = 'green'
-            pg.draw.rect(screen, color, (block_x, block_y, 25, 25))
-            block_x += 35
-        block_y += 35
-        block_x = 225
-    return map, boolz
 
 def mini_map():
     block_x = 850
@@ -364,10 +186,10 @@ def mini_map():
         block_x = 850
 
 map_order = [
-    ["corner('down right')", 'hori_line()', "t_map('down')", "corner('down left')"],
-    ["corner('up right')", 'hori_line()', "t_map('left')", 'vert_line()'],
-    ["corner('down right')", "t_map('down')", "t_map('up')", "t_map('left')"],
-    ['start_map()', "corner('up right')", 'hori_line()', "corner('up left')"]
+    ["maps.corner('down right')", 'maps.hori_line()', "maps.t_map('down')", "maps.corner('down left')"],
+    ["maps.corner('up right')", 'maps.hori_line()', "maps.t_map('left')", 'maps.vert_line()'],
+    ["maps.corner('down right')", "maps.t_map('down')", "maps.t_map('up')", "maps.t_map('left')"],
+    ['maps.start_map()', "maps.corner('up right')", 'maps.hori_line()', "maps.corner('up left')"]
 ]
 
 
@@ -462,7 +284,7 @@ while running:
 
         if event.type == pg.MOUSEBUTTONDOWN:
             if mouseX >= 155 and mouseX <= 344 and mouseY >= 480 and mouseY <= 520:
-                player.color = 'Red'
+                player.color = 'red'
                 enemy.color = 'Blue'
             elif mouseX >= 630 and mouseX <= 821 and mouseY >= 480 and mouseY <= 520:
                 player.color = 'Blue'
@@ -757,13 +579,4 @@ while running:
     mousePos = pg.mouse.get_pos()
     mouseX = mousePos[0]
     mouseY = mousePos[1]
-    #get_text(20, f'{mouseX}, {mouseY}', 'grey', (mouseX, mouseY))
-    #get_text(20, f'{str(player.defense)}, {str(enemy.defense)}', 'white', (40, 10))
-    #get_text(20, f'{str(player.health)}, {str(enemy.health)}', 'white', (40, 30))
-    get_text(20, f'{player.level}, {player.defense}, {player.health}', 'white', (50, 10))
-
-    #get_text(20, f'{enemy.health}, {p_damage}, {enemy.health_bar}, {e_bar_x}, {bar_change}',  player.color,(70, 10))
-    # get_text(20, f'{player.loc[0]}, {player.loc[1]}', 'white', (50, 50))
-    # get_text(20, f'{map_loc[0]}, {map_loc[1]}', 'white', (50, 70))
-    # get_text(20, str(time_passed), 'white', (50, 90))
     pg.display.update()
