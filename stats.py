@@ -11,35 +11,42 @@ def print_stats(level):
 
 
 class Entity:
-    def __init__(self, color, level, defense, attack, speed):
+    def __init__(self, color, level, defense, attack, speed, health, moves):
         self.color = color
         self.name = color
         self.defense = defense
         self.attack = attack
         self.speed = speed
-
-        self.level = 1
+        self.health = health
+        self.moves = moves
+        self.level = level
         self.experience = 0
-        # self.health = 68 + ((self.level - 1) *2)
         self.health_bar = 298
-        # self.defense = 40 + math.floor(  ((self.level - 2) * 1.5)  )
-        # self.attack = 45 + math.floor(  ((self.level - 2) * 1.5)   )
-        # self.buff = 1
-        # self.debuff = 1
+        self.crit_chance = 35
+
 
     def level_up(self):
         self.level = self.level + 1
+        self.defense += 4
+        self.attack += 4
+        self.speed += 2
+        self.health += 10
 
 
 class Player(Entity):
-    def __init__(self, color, level, defense, attack, speed):
-        super().__init__(color, level, defense, attack, speed)
+    def __init__(self, color, level, defense, attack, speed, health, moves):
+        super().__init__(color, level, defense, attack, speed, health, moves)
+        self.loc = [0,15]
 
 
 class Enemy(Entity):
-    def __init(self, color, level, defense, attack, speed):
-        super().__init__(color, level, defense, attack, speed)
+    def __init__(self, color, level, defense, attack, speed, health, moves):
+        super().__init__(color, level, defense, attack, speed, health, moves)
 
+
+# class Pikachu(Entity):
+#     def __init__(self, color, level, defense, attack, speed):
+#         super().__init__(color, level, defense, attack, speed)
 
 
 # class Player(Entity):
@@ -62,8 +69,9 @@ if __name__ == "__main__":
     # while test_level < 21:
     #     print_stats(test_level)
     #     test_level += 1
-    player = Player('Red', 1, 10, 15, 20)
-    enemy = Enemy('Aqua', 1, 7, 10, 35)
-    print(f"{player.name} is facing {enemy.name}!\nP vs E defense {player.defense}:{enemy.defense}  \nP vs E attack {player.attack}:{enemy.attack} \nP vs E speed {player.speed}:{enemy.speed}")
-    player.level_up()
-    print(f"{player.name} is facing {enemy.name}!\nP vs E defense {player.defense}:{enemy.defense}  \nP vs E attack {player.attack}:{enemy.attack} \nP vs E speed {player.speed}:{enemy.speed}")
+
+    # print(player.moves)
+    
+    #pikachu = Enemy('Yellow', 999, 999, 999, 999)
+player_stats = Player('Red', 1, 10, 15, 68, 20, moves_to_use.moves_p)
+enemy_stats = Enemy('Aqua', 1, 7, 10, 68, 35, moves_to_use.moves_e)

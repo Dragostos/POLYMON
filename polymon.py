@@ -94,46 +94,16 @@ e_damage = 0
 bar_change = 0
 
 
+player = stats.player_stats
+enemy = stats.enemy_stats
 
 
-class Entity:
-    def __init__(self):
-        self.color = 'black'
-        self.level = 1
-        self.experience = 0
-        self.health = 68 + ((self.level - 1) *2)
-        self.health_bar = 298
-        self.defense = 40 + math.floor(  ((self.level - 2) * 1.5)  )
-        self.attack = 45 + math.floor(  ((self.level - 2) * 1.5)   )
-        self.buff = 1
-        self.debuff = 1
-
-class Player(Entity):
-    def __init__(self):
-        super().__init__()
-        self.loc = [0,15]
-        self.name = 'Player'
-        self.moves = moves_to_use.moves_p
-
-class Enemy(Entity):
-    def __init__(self):
-        super().__init__()
-        self.name = 'Enemy'
-        self.moves = moves_to_use.moves_e
-
-
-
-
-
-player = Player()
-enemy = Enemy()
-
-
-def random_mult():
+def random_mult(user):
     returned = 1
-    if random.randint(217,255) / 255 >= 1:
+    if random.randint(1,38) <= user.crit_chance:
         returned = 2
-
+        
+    print('returned', returned)
     return returned
 
 
@@ -144,16 +114,16 @@ def get_damage(user, target, move):
     user_debuff = 0
     
     if user.moves[move]['Name'] == 'Poly Tackle':
-        user_damage = math.floor((  (  (((2*user.level*2)/5)+2) * user.moves[move]['Power'] * ( user.attack / target.defense ) / 50  ) +2 ) * random_mult() )
+        user_damage = math.floor((  (  (((2*user.level*2)/5)+2) * user.moves[move]['Power']) / 50  ) +2 ) * random_mult(player) 
         move_text = f'{user.color} dealt {user_damage} damage!'
 
 
 
     elif user.moves[move]['Name'] == 'Square Fury':
         if random.randint(1,10) <= user.moves[move]['Chance']:
-            user_damage = math.floor((  (  (((2*user.level*2)/5)+2) * (user.moves[move]['Power']*2) * ( user.attack / target.defense ) / 50  ) +3 ) * random_mult() )
+            user_damage = math.floor((  (  (((2*user.level*2)/5)+2) * (user.moves[move]['Power']*2)) +3 ) * random_mult(player) )
         else:
-            user_damage = math.floor((  (  (((2*user.level*2)/5)+2) * user.moves[move]['Power'] * ( user.attack / target.defense ) / 50  ) +1 ) * random_mult() )
+            user_damage = math.floor((  (  (((2*user.level*2)/5)+2) * user.moves[move]['Power']) +1 ) * random_mult(player) )
         move_text = f'{user.color} dealt {user_damage} damage!' 
 
 
@@ -176,7 +146,7 @@ def mini_map():
     block_y = 25
     for y in range(4):
         for x in range(4):
-            if map_loc[1] == y and map_loc[0] == x and time_passed % 2 == 0:
+            if map_loc[1] == y and map_loc[0] == x and mini_map_time % 2 == 0:
                 color = player.color
             else:
                 color = 'green'
@@ -253,17 +223,20 @@ while running:
                 map_loc[0] += 1
                 player.loc[0] = 0
             checked_edge = False
+        
+        if event.type == timer_event and mini_map_timer:
+            mini_map_time += 1
 
         if event.type == timer_event and on_green == True:  # encounter
             time_passed += 1
-            if time_passed % 10 == 0:
+            if time_passed % 1 == 0:
                 encounter()
+
         
         if event.type == timer_event and enemy_move_choice != False and player_move_choice != False:
             counter -= 1
         
-        if event.type == timer_event and mini_map_timer and (on_green or on_white):
-            mini_map_time += 1
+        
             
       
     screen.fill('black')
@@ -536,7 +509,7 @@ while running:
                     bar_change_e, bar_change_p = 0, 0
                     getting_damage_p, getting_damage_e = True, True 
                     #player.level += 1
-                    print(f"player \nhealth = {player.health}   \nattack = {player.attack}   \ndefense = {player.defense}")
+                    #print(f"player \nhealth = {player.health}   \nattack = {player.attack}   \ndefense = {player.defense}")
                     counter = 2
                 
                 if player.health <= 0 or enemy.health <= 0:
@@ -555,8 +528,7 @@ while running:
     if battle_results:
         
         if player.health > 0 and enemy.health <= 0:
-            player.level += 1
-            enemy.level += 1
+            player.level_up()
 
         reset_stats()
 
@@ -579,4 +551,5 @@ while running:
     mousePos = pg.mouse.get_pos()
     mouseX = mousePos[0]
     mouseY = mousePos[1]
+    get_text(20, str(mini_map_time), 'white', (20, 20))
     pg.display.update()
