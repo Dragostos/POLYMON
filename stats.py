@@ -1,10 +1,15 @@
 import moves_to_use
+import math
+import random
 
-
-def print_stats(level):
-    print("level", level)
-    print("health:", 68 + ((level - 1) * 2))
-    print("defense:", int(40 + ((level - 2) * 1.5)))
+def print_stats(user):
+    print("level", user.level)
+    print("defense:", user.defense)
+    print("attack:", user.attack)
+    print("speed:", user.speed)
+    print("health:", user.health)
+    
+    
     print("\n\n")
 
 
@@ -13,18 +18,13 @@ def print_stats(level):
 #defense 
 class Entity:
     def __init__(self, color, level, defense, attack, speed, health, moves):
+        #print(defense, attack, speed, health)
         self.color = color
         self.name = color
-        if color == 'Red':
-            print('defense',str(defense*2))
-            self.defense = (defense *2) 
-            
-        
-        
-
-        self.attack = attack
-        self.speed = speed
-        self.health = health
+        self.defense = 40 + math.floor( math.pow(defense, 1.5)  )
+        self.attack = 80 + math.floor( math.pow(attack, 1.5)  )
+        self.speed = 20 + math.floor( math.pow(speed, 1.5)  )
+        self.health = 60 + math.floor( math.pow(health, 1.5)  )
         self.moves = moves
         self.level = level
         self.experience = 0
@@ -51,24 +51,6 @@ class Enemy(Entity):
         super().__init__(color, level, defense, attack, speed, health, moves)
 
 
-# class Pikachu(Entity):
-#     def __init__(self, color, level, defense, attack, speed):
-#         super().__init__(color, level, defense, attack, speed)
-
-
-# class Player(Entity):
-#     def __init__(self):
-#         super().__init__()
-#         self.loc = [0,15]
-#         self.name = 'Player'
-#         self.moves = moves_to_use.moves_p
-
-# class Enemy(Entity):
-#     def __init__(self):
-#         super().__init__()
-#         self.name = 'Enemy'
-#         self.moves = moves_to_use.moves_e
-
 if __name__ == "__main__":
     test_level = 1
     # myguy = Entity()
@@ -80,6 +62,18 @@ if __name__ == "__main__":
     # print(player.moves)
     
     #pikachu = Enemy('Yellow', 999, 999, 999, 999)
-player_stats = Player('Red', 1, 9, 10, 68, 20, moves_to_use.moves_p)
-print(player_stats.defense)
+player_stats = Player('Red', 1, 1, 1, 1, 1, moves_to_use.moves_p)
+#print_stats(player_stats)
 enemy_stats = Enemy('Aqua', 1, 7, 10, 68, 35, moves_to_use.moves_e)
+
+
+def test_stats():
+    class poopy(Entity):
+        def __init__(self, color, level, defense, attack, speed, health, moves):
+            super().__init__(color, level, defense, attack, speed, health, moves)
+    for i in range(10):
+        poopy_butt = poopy('Blue', i+1, i+1, i+1, i+1, i+1, moves_to_use.moves_p)
+        print(str(i+1))
+        print_stats(poopy_butt)
+
+test_stats()
