@@ -8,13 +8,20 @@ def print_stats(level):
     print("\n\n")
 
 
+#make the entry stats on a 1-10 scale
 
-
+#defense 
 class Entity:
     def __init__(self, color, level, defense, attack, speed, health, moves):
         self.color = color
         self.name = color
-        self.defense = defense
+        if color == 'Red':
+            print('defense',str(defense*2))
+            self.defense = (defense *2) 
+            
+        
+        
+
         self.attack = attack
         self.speed = speed
         self.health = health
@@ -73,5 +80,6 @@ if __name__ == "__main__":
     # print(player.moves)
     
     #pikachu = Enemy('Yellow', 999, 999, 999, 999)
-player_stats = Player('Red', 1, 10, 15, 68, 20, moves_to_use.moves_p)
+player_stats = Player('Red', 1, 9, 10, 68, 20, moves_to_use.moves_p)
+print(player_stats.defense)
 enemy_stats = Enemy('Aqua', 1, 7, 10, 68, 35, moves_to_use.moves_e)
