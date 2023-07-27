@@ -330,33 +330,33 @@ while running:
     if battle:
         pg.draw.rect(screen, 'white', (100, 50, 800, 500)) #backdrop
 
-        # if encounter_part1:# player init animation
-        #     pg.draw.rect(screen, 'black', (125, 475, 750, 50))
-        #     pg.draw.rect(screen, 'green', (130, 480, length_p, 40))
-        #     if time_passed % 1 == 0 and length_p <= 740:
-        #         length_p += 2*2
-        #     get_text(40, 'Loading Player Stats', 'black', (500, 100))
-        #     if length_p >= 740:
-        #         encounter_part2 = True
-        #         encounter_part1 = False
-        # if encounter_part2: # enemy init animation
-        #     pg.draw.rect(screen, 'black', (125, 475, 750, 50))
-        #     pg.draw.rect(screen, 'green', (130, 480, length_e, 40))
-        #     if time_passed % 1 == 0 and length_e <= 740:
-        #         length_e += 2*2
-        #     get_text(40, 'Loading Enemy Stats', 'black', (500, 100))
-        #     if length_e >= 740:
-        #         encounter_part3 = True
-        #         encounter_part2 = False
-        # if encounter_part3: #final animation
-        #     pg.draw.rect(screen, 'black', (125, 475, 750, 50))
-        #     pg.draw.rect(screen, 'green', (130, 480, length_b, 40))
-        #     if time_passed % 1 == 0 and length_b <= 740:
-        #         length_b += 2*2
-        #     get_text(40, 'Initializing Battle', 'black', (500, 100))
-        #     if length_b >= 740:
-        #         get_text(40, 'Complete', 'black', (500, 300))
-        #         encounter_part3 = False
+        if encounter_part1:# player init animation
+            pg.draw.rect(screen, 'black', (125, 475, 750, 50))
+            pg.draw.rect(screen, 'green', (130, 480, length_p, 40))
+            if time_passed % 1 == 0 and length_p <= 740:
+                length_p += 2*2
+            get_text(40, 'Loading Player Stats', 'black', (500, 100))
+            if length_p >= 740:
+                encounter_part2 = True
+                encounter_part1 = False
+        if encounter_part2: # enemy init animation
+            pg.draw.rect(screen, 'black', (125, 475, 750, 50))
+            pg.draw.rect(screen, 'green', (130, 480, length_e, 40))
+            if time_passed % 1 == 0 and length_e <= 740:
+                length_e += 2*2
+            get_text(40, 'Loading Enemy Stats', 'black', (500, 100))
+            if length_e >= 740:
+                encounter_part3 = True
+                encounter_part2 = False
+        if encounter_part3: #final animation
+            pg.draw.rect(screen, 'black', (125, 475, 750, 50))
+            pg.draw.rect(screen, 'green', (130, 480, length_b, 40))
+            if time_passed % 1 == 0 and length_b <= 740:
+                length_b += 2*2
+            get_text(40, 'Initializing Battle', 'black', (500, 100))
+            if length_b >= 740:
+                get_text(40, 'Complete', 'black', (500, 300))
+                encounter_part3 = False
 
         #start battle
         encounter_part1 = False

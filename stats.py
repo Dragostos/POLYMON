@@ -71,9 +71,16 @@ def test_stats():
     class poopy(Entity):
         def __init__(self, color, level, defense, attack, speed, health, moves):
             super().__init__(color, level, defense, attack, speed, health, moves)
-    for i in range(10):
-        poopy_butt = poopy('Blue', i+1, i+1, i+1, i+1, i+1, moves_to_use.moves_p)
-        print(str(i+1))
-        print_stats(poopy_butt)
+    poopy_butt1 = poopy('Blue', 1, 1, 1, 1, 1, moves_to_use.moves_p)
+    lvl = 50
+    poopy_butt2 = poopy('Blue', lvl, lvl, lvl, lvl, lvl, moves_to_use.moves_p)
+    
+    print_stats(poopy_butt1)
+    print_stats(poopy_butt2)
+    
+    # for i in range(100):
+        
+    #     #print('level', str(i+1))
+    #     print_stats(poopy_butt)
 
 test_stats()
